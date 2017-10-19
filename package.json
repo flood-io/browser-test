@@ -1,0 +1,19 @@
+{
+  "name": "browser-test",
+  "version": "0.1.0",
+  "description": "Browser Test provides an API for scripting Browser Level Load Tests against Flood Chrome",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/flood-io/browser-test.git"
+  },
+  "author": "Ivan Vanderbyl",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/flood-io/browser-test/issues"
+  },
+  "homepage": "https://github.com/flood-io/browser-test#readme"
+}
