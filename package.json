@@ -4,7 +4,10 @@
   "description": "Browser Test provides an API for scripting Browser Level Load Tests against Flood Chrome",
   "main": "dist/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build:live": "nodemon --exec ts-node -- ./index.ts",
+    "test": "lab --sourcemaps --transform node_modules/lab-transform-typescript ./tests",
+    "test:ci": "lab --transform node_modules/lab-transform-typescript ./tests",
+    "test:live": "nodemon --ext ts --watch ./tests --watch ./src --exec 'npm test'"
   },
   "repository": {
     "type": "git",
@@ -15,5 +18,9 @@
   "bugs": {
     "url": "https://github.com/flood-io/browser-test/issues"
   },
-  "homepage": "https://github.com/flood-io/browser-test#readme"
+  "homepage": "https://github.com/flood-io/browser-test#readme",
+  "dependencies": {
+    "@types/lab": "^11.1.0",
+    "lab": "^14.3.1"
+  }
 }
