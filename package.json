@@ -21,20 +21,8 @@
 		"typescript": "^2.6.1"
 	},
 	"main": "index.js",
-	"directories": {
-		"lib": "lib"
-	},
-	"files": [
-		"README.md"
-	],
 	"devDependencies": {
 		"npm-release": "^1.0.0"
 	},
-	"keywords": [
-		"load-testing",
-		"browser-testing",
-		"bdd",
-		"tdd",
-		"performance"
-	]
+	"keywords": [ "load-testing", "browser-testing", "bdd", "tdd", "performance" ]
 }
