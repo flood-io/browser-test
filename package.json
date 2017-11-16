@@ -1,26 +1,23 @@
 {
-  "name": "browser-test",
-  "version": "0.1.0",
-  "description": "Browser Test provides an API for scripting Browser Level Load Tests against Flood Chrome",
-  "main": "dist/index.js",
-  "scripts": {
-    "build:live": "nodemon --exec ts-node -- ./index.ts",
-    "test": "lab --sourcemaps --transform node_modules/lab-transform-typescript ./tests",
-    "test:ci": "lab --transform node_modules/lab-transform-typescript ./tests",
-    "test:live": "nodemon --ext ts --watch ./tests --watch ./src --exec 'npm test'"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+ssh://git@github.com/flood-io/browser-test.git"
-  },
-  "author": "Ivan Vanderbyl",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/flood-io/browser-test/issues"
-  },
-  "homepage": "https://github.com/flood-io/browser-test#readme",
-  "dependencies": {
-    "@types/lab": "^11.1.0",
-    "lab": "^14.3.1"
-  }
+	"name": "@flood/chrome",
+	"version": "0.1.0",
+	"description": "Flood Chrome provides an API for scripting Browser Level Load Tests",
+	"main": "dist/index.js",
+	"scripts": {
+		"build:live": "nodemon --exec ts-node -- ./index.ts",
+		"test": "lab --sourcemaps --transform node_modules/lab-transform-typescript ./tests",
+		"test:ci": "lab --transform node_modules/lab-transform-typescript ./tests",
+		"test:live": "nodemon --ext ts --watch ./tests --watch ./src --exec 'npm test'"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+ssh://git@github.com/flood-io/browser-test.git"
+	},
+	"author": "Ivan Vanderbyl",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/flood-io/browser-test/issues"
+	},
+	"homepage": "https://github.com/flood-io/browser-test#readme",
+	"dependencies": {}
 }

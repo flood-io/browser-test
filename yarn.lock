@@ -2,6 +2,10 @@
 # yarn lockfile v1
 
 
+"@types/code@^4.0.3":
+  version "4.0.3"
+  resolved "https://registry.yarnpkg.com/@types/code/-/code-4.0.3.tgz#9c4de39f86eb3eba070146d2dab7dbc3f8eac35f"
+
 "@types/lab@^11.1.0":
   version "11.1.0"
   resolved "https://registry.yarnpkg.com/@types/lab/-/lab-11.1.0.tgz#6a6a920744d43c09356a52ef30772555bf4b70e8"
@@ -185,6 +189,12 @@ co@^4.6.0:
 code@4.1.x:
   version "4.1.0"
   resolved "https://registry.yarnpkg.com/code/-/code-4.1.0.tgz#209ad11d05af8a0c1c7aaf694d9fa4d2c7d95b85"
+  dependencies:
+    hoek "4.x.x"
+
+code@^5.1.0:
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/code/-/code-5.1.0.tgz#205e4213536c3cf21b12194384901fadcd81bc1a"
   dependencies:
     hoek "4.x.x"
 
