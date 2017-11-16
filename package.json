@@ -1,6 +1,7 @@
 {
 	"name": "@flood/chrome",
 	"version": "0.1.0",
+	"private": false,
 	"description": "Flood Chrome provides an API for scripting Browser Level Load Tests",
 	"types": "./index.d.ts",
 	"scripts": {
@@ -21,5 +22,11 @@
 	"homepage": "https://github.com/flood-io/browser-test#readme",
 	"dependencies": {
 		"typescript": "^2.6.1"
-	}
+	},
+	"main": "index.js",
+	"directories": {
+		"lib": "lib"
+	},
+	"devDependencies": {},
+	"keywords": [ "load-testing", "browser-testing", "bdd", "tdd", "performance" ]
 }
