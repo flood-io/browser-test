@@ -38,8 +38,9 @@ export interface StepOptions {
  * @export
  * @param {() => void} fn A callback function to construct the rest of your test.
  */
-export declare function test(fn: () => void)
 export declare function test(options: TestOptions, fn: () => void)
+export declare function test(fn: () => void)
+export declare function test(any)
 
 /**
  * Declares each step in your test. This must go within the callback from `test()`.
@@ -70,13 +71,6 @@ declare class Clickable {
 }
 
 export declare class Driver extends Clickable {
-	/**
-   * Returns a Promise which resolves when the first promise in `...promises` resolves.
-   *
-   * @param {...Promise[]} promises
-   */
-	public race(...promises)
-
 	/**
   * Creates a waiter, which accepts any wait arguments. This essentially creates a
   * Promise which will resolve when the condition is met, or reject when it times out.
@@ -118,6 +112,11 @@ export declare class Driver extends Clickable {
 
 	public waitForElement(selector: string, options: {}): Promise<any>
 
+	public findElement(Locator: Locator): Promise<ElementHandle>
+	public findElements(Locator: Locator): Promise<ElementHandle[]>
+
+	public wait(waiter: Conditional): Promise<any>
+
 	public findElementWithText(selector: string, text: string): Promise<any>
 }
 
@@ -130,4 +129,54 @@ declare class ElementHandle extends Clickable {
    * @memberof ElementHandle
    */
 	attr(name: string): Promise<string>
+}
+
+declare class Conditional {}
+declare class Locator {}
+
+declare class By extends Locator {
+	static className(className: string): Locator
+	static css(seelctor: string): Locator
+	static id(id: string): Locator
+	static js(func: () => ElementHandle): Locator
+	static linkText(text: string): Locator
+	static partialLinkText(text: string): Locator
+	static name(name: string): Locator
+	static attr(tagName: string, attrName: string, attrValue?: string): Locator
+	static xpath(path: string): Locator
+}
+
+declare class Until extends Conditional {
+	static ableToSwitchToFrame(): Conditional
+	static alertIsPresent(alertText: string): Conditional
+
+	static elementIsDisabled(selectorOrLocator: Locator | string): Conditional
+
+	static elementIsEnabled(selectorOrLocator: Locator | string): Conditional
+
+	static elementIsSelected(selectorOrLocator: Locator | string): Conditional
+	static elementIsNotSelected(selectorOrLocator: Locator | string): Conditional
+	static elementIsVisible(selectorOrLocator: Locator | string): Conditional
+	static elementIsNotVisible(selectorOrLocator: Locator | string): Conditional
+	static elementLocated(selectorOrLocator: Locator | string): Conditional
+	static elementTextContains(selectorOrLocator: Locator | string, text: string): Conditional
+	static elementTextIs(selectorOrLocator: Locator | string, text: string): Conditional
+	static elementTextMatches(selectorOrLocator: Locator | string, regex: RegExp): Conditional
+
+	/**
+   * Creates a condition that will loop until at least one element is found with the given locator.
+   */
+	static elementsLocated(selectorOrLocator: Locator | string): Conditional
+
+	/**
+   * Creates a condition that will wait for the given element to become stale.
+   * An element is considered stale once it is removed from the DOM, or a new page has loaded.
+   */
+	static stalenessOf(selectorOrLocator: Locator | string): Conditional
+	static titleContains(title: string): Conditional
+	static titleIs(title: string): Conditional
+	static titleMatches(title: RegExp): Conditional
+	static urlContains(url: string): Conditional
+	static urlIs(url: string): Conditional
+	static urlMatches(url: RegExp): Conditional
 }
