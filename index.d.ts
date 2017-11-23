@@ -72,16 +72,6 @@ declare class Clickable {
 
 export declare class Driver extends Clickable {
 	/**
-  * Creates a waiter, which accepts any wait arguments. This essentially creates a
-  * Promise which will resolve when the condition is met, or reject when it times out.
-  *
-  * @param {number} timeout
-  * @returns {Promise<void>}
-  * @memberof Driver
-  */
-	public wait(timeout: number): Promise<void>
-
-	/**
   * Instructs the browser to navigate to a specific page. This is typically used as the
   * entrypoint to your test, as the first instruction it is also responsible for creating
   * a new Browser tab for this page to load into.
@@ -92,13 +82,13 @@ export declare class Driver extends Clickable {
   */
 	public visit(url: string): Promise<void>
 
-	public selectByValue(selector: string, value: string): Promise<void>
+	public selectByValue(locatorOrSelector: Locator | string, value: string): Promise<void>
 
-	public selectByIndex(selector: string, index: string): Promise<void>
+	public selectByIndex(locatorOrSelector: Locator | string, index: string): Promise<void>
 
-	public selectByText(selector: string, text: string): Promise<void>
+	public selectByText(locatorOrSelector: Locator | string, text: string): Promise<void>
 
-	public clearSelect(selector: string): Promise<void>
+	public clearSelect(locatorOrSelector: Locator | string): Promise<void>
 
 	public fillIn(selector: string, text: string, options?: { delay: number }): Promise<void>
 
@@ -115,9 +105,15 @@ export declare class Driver extends Clickable {
 	public findElement(Locator: Locator): Promise<ElementHandle>
 	public findElements(Locator: Locator): Promise<ElementHandle[]>
 
-	public wait(waiter: Conditional): Promise<any>
-
-	public findElementWithText(selector: string, text: string): Promise<any>
+	/**
+   * Creates a waiter which will pause the test until a condition is met or a timeout is reached.
+   *
+   * You can use either a numeric value in milliseconds to wait for a specific time,
+   * or a @Waiter, for more advanced capabilities.
+   *
+   * @param waiterOrTimeout
+   */
+	public wait(waiterOrTimeout: Conditional | number): Promise<void>
 }
 
 declare class ElementHandle extends Clickable {
@@ -129,6 +125,28 @@ declare class ElementHandle extends Clickable {
    * @memberof ElementHandle
    */
 	attr(name: string): Promise<string>
+
+	/**
+   * Takes a screenshot of this element and saves it to the results folder with a random name.
+   */
+	screenshot(options?): Promise<void>
+
+	/**
+   * Retrieves the text content of this element excluding leading and trailing whitespace.
+   */
+	text(): Promise<string>
+
+	press(...keys: Array<Key | string>): Promise<void>
+
+	/**
+   * Schedules a command to clear the value of this element.
+   * This command has no effect if the underlying DOM element is neither a text
+   * INPUT, SELECT, or a TEXTAREA element.
+   */
+	clear(): Promise<void>
+
+	public findElement(Locator: Locator): Promise<ElementHandle>
+	public findElements(Locator: Locator): Promise<ElementHandle[]>
 }
 
 declare class Conditional {}
@@ -179,4 +197,70 @@ declare class Until extends Conditional {
 	static urlContains(url: string): Conditional
 	static urlIs(url: string): Conditional
 	static urlMatches(url: RegExp): Conditional
+}
+
+export enum Key {
+	NULL,
+	CANCEL, // ^break
+	HELP,
+	BACK_SPACE,
+	TAB,
+	CLEAR,
+	RETURN,
+	ENTER,
+	SHIFT,
+	CONTROL,
+	ALT,
+	PAUSE,
+	ESCAPE,
+	SPACE,
+	PAGE_UP,
+	PAGE_DOWN,
+	END,
+	HOME,
+	ARROW_LEFT,
+	LEFT,
+	ARROW_UP,
+	UP,
+	ARROW_RIGHT,
+	RIGHT,
+	ARROW_DOWN,
+	DOWN,
+	INSERT,
+	DELETE,
+	SEMICOLON,
+	EQUALS,
+
+	NUMPAD0,
+	NUMPAD1,
+	NUMPAD2,
+	NUMPAD3,
+	NUMPAD4,
+	NUMPAD5,
+	NUMPAD6,
+	NUMPAD7,
+	NUMPAD8,
+	NUMPAD9,
+	MULTIPLY,
+	ADD,
+	SEPARATOR,
+	SUBTRACT,
+	DECIMAL,
+	DIVIDE,
+
+	F1,
+	F2,
+	F3,
+	F4,
+	F5,
+	F6,
+	F7,
+	F8,
+	F9,
+	F10,
+	F11,
+	F12,
+
+	COMMAND,
+	META,
 }
