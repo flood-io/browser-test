@@ -122,41 +122,66 @@ export declare class Driver {
   public visit(url: string, options?: NavigationOptions): Promise<void>
 
   /**
-   * Sends a click event to the element located at `selector`. If the element is
-   * currently outside the viewport it will first scroll to that element.
+   * Creates a waiter which will pause the test until a condition is met or a timeout is reached.
    *
-   * @param {string} selector
+   * You can use either a numeric value in seconds to wait for a specific time,
+   * or a {@linkcode Condition}, for more flexible conditions.
    */
-  public click(selector: string): Promise<void>
-
-  public rightClick(selector: string): Promise<void>
-
-  public middleClick(selector: string): Promise<void>
-
-  public selectByValue(locatorOrSelector: Locator | string, value: string): Promise<void>
-
-  public selectByIndex(locatorOrSelector: Locator | string, index: string): Promise<void>
-
-  public selectByText(locatorOrSelector: Locator | string, text: string): Promise<void>
-
-  public clearSelect(locatorOrSelector: Locator | string): Promise<void>
-
-  public fillIn(selector: string, text: string, options?: { delay: number }): Promise<void>
-
-  public blur(selector: string): Promise<void>
-
-  public focus(selector: string): Promise<void>
-
-  public pressKey(keyCode: string, options?: { text: string }): Promise<void>
-
-  public keyboardDown(keyCode: string, options?: { text: string }): Promise<void>
+  public wait(timeoutOrCondition: Condition | number): Promise<boolean>
 
   /**
-   * @deprecated
-   * @param selector
-   * @param options
+   * Sends a click event to the element located at `selector`. If the element is
+   * currently outside the viewport it will first scroll to that element.
    */
-  public waitForElement(selector: string, options?: {}): Promise<any>
+  public click(selectorOrLocator: string | Locator, options?: ClickOptions): Promise<void>
+
+  /**
+   * Sends a double-click event to the element located by the supplied Locator or `selector`. If the element is
+   * currently outside the viewport it will first scroll to that element.
+   */
+  public doubleClick(locatable: Locatable, options?: ClickOptions): Promise<void>
+
+  /**
+   * Selects an option within a <select> tag using the value of the <option> element.
+   */
+  public selectByValue(locatable: Locatable, value: string): Promise<void>
+
+  /**
+   * Selects an option within a <select> tag by its index in the list.
+   */
+  public selectByIndex(locatable: Locatable, index: string): Promise<void>
+
+  /**
+   * Selects an option within a <select> tag by matching its visible text.
+   */
+  public selectByText(locatable: Locatable, text: string): Promise<void>
+
+  /**
+   * Clears the selected value of an input or select control.
+   */
+  public clear(locatable: Locatable): Promise<void>
+
+  /**
+   * Types a string into an <input> control, key press by key press.
+   */
+  public type(locatable: Locatable, text: string, options?: { delay: number }): Promise<void>
+
+  public blur(locator: Locatable): Promise<void>
+
+  public focus(locator: Locatable): Promise<void>
+
+  public press(
+    keyCode: string,
+    options?: {
+      /**
+       * A string of text to type
+       */
+      text?: string /**
+       * Delay between key presses, in milliseconds.
+       */
+      delay?: number
+    },
+  ): Promise<void>
 
   /**
    * Uses the provided locator to find the first element it matches, returning an ElementHandle.
@@ -167,14 +192,6 @@ export declare class Driver {
    * Uses the provided locator to find all elements matching the locator condition, returning an array of ElementHandles
    */
   public findAllElements(locator: string | Locator): Promise<ElementHandle[]>
-
-  /**
-   * Creates a waiter which will pause the test until a condition is met or a timeout is reached.
-   *
-   * You can use either a numeric value in milliseconds to wait for a specific time,
-   * or a {@linkcode Condition}, for more advanced capabilities.
-   */
-  public wait(timeoutOrCondition: Condition | number): Promise<boolean>
 }
 
 declare class ElementHandle {
@@ -185,40 +202,13 @@ declare class ElementHandle {
    * @returns {Promise<string>}
    * @memberof ElementHandle
    */
-  attr(name: string): Promise<string>
+  public getAttribute(name: string): Promise<string>
 
   /**
    * Sends a click event to the element attached to this handle. If the element is
    * currently outside the viewport it will first scroll to that element.
    */
-  public click(): Promise<void>
-
-  /**
-   * Sends a right click event to the element attached to this handle. If the element is
-   * currently outside the viewport it will first scroll to that element.
-   */
-  public rightClick(): Promise<void>
-
-  /**
-   * Sends a middle click event to the element attached to this handle. If the element is
-   * currently outside the viewport it will first scroll to that element.
-   */
-  public middleClick(): Promise<void>
-
-  /**
-   * Takes a screenshot of this element and saves it to the results folder with a random name.
-   */
-  public screenshot(options?): Promise<void>
-
-  /**
-   * Retrieves the text content of this element excluding leading and trailing whitespace.
-   */
-  public text(): Promise<string>
-
-  /**
-   * Sends a sequence of key presses to this element.
-   */
-  public press(...keys: Array<Key | string>): Promise<void>
+  public click(options?: ClickOptions): Promise<void>
 
   /**
    * Schedules a command to clear the value of this element.
@@ -227,15 +217,57 @@ declare class ElementHandle {
    */
   public clear(): Promise<void>
 
+  public sendKeys(...keys: string[]): Promise<void>
+
+  public type(text: string): Promise<void>
+
+  /**
+   * Sends focus to this element so that it receives keyboard inputs.
+   */
+  public focus(): Promise<void>
+
+  /**
+   * Clears focus from this element so that it will no longer receive keyboard inputs.
+   */
+  public blur(): Promise<void>
+
+  /**
+   * Takes a screenshot of this element and saves it to the results folder with a random name.
+   */
+  public takeScreenshot(options?: ScreenshotOptions): Promise<void>
+
   /**
    * Locates an element using the supplied {@linkcode Locator}, returning an {@linkcode ElementHandle}
    */
-  public findElement(Locator: Locator): Promise<ElementHandle>
+  public findElement(locator: Locator | string): Promise<ElementHandle>
 
   /**
    * Locates all elements using the supplied {@linkcode Locator}, returning an array of {@linkcode ElementHandle}'s
    */
-  public findElements(Locator: Locator): Promise<ElementHandle[]>
+  public findElements(locator: Locator | string): Promise<ElementHandle[]>
+
+  public tagName(): Promise<string>
+
+  public getId(): Promise<string>
+
+  public getAttribute(key: string): Promise<string>
+
+  public isSelected(): Promise<boolean>
+
+  public isSelectable(): Promise<boolean>
+
+  public isDisplayed(): Promise<boolean>
+
+  public isEnabled(): Promise<boolean>
+
+  /**
+   * Retrieves the text content of this element excluding leading and trailing whitespace.
+   */
+  public text(): Promise<string>
+
+  public size(): Promise<{ width: number; height: number }>
+
+  public location(): Promise<{ x: number; y: number }>
 }
 
 declare class Condition {}
@@ -271,6 +303,22 @@ declare class By {
    * @param text
    */
   static partialLinkText(text: string): Locator
+
+  /**
+   * Locates all elements whose `textContent` equals the given
+   * substring and is not hidden by CSS.
+   *
+   * @param {string} text The string to check for in a elements's visible text.
+   */
+  static visibleText(text: string): Locator
+
+  /**
+   * Locates all elements whose `textContent` contains the given
+   * substring and is not hidden by CSS.
+   *
+   * @param {string} text The substring to check for in a elements's visible text.
+   */
+  static partialVisibleText(text: string): Locator
 
   /**
    * Finds an element containing a specified attribute value
@@ -370,6 +418,8 @@ declare class Until {
   static urlMatches(url: RegExp): Condition
 }
 
+export type Locatable = Locator | ElementHandle | string
+
 export enum Key {
   NULL,
   CANCEL, // ^break
@@ -448,4 +498,63 @@ export interface NavigationOptions {
    * @default load Navigation is consider when the `load` event is fired.
    */
   waitUntil?: 'load' | 'domcontentloaded' | 'networkidle0' | 'networkidle2'
+}
+
+export enum MouseButtons {
+  LEFT = 'left',
+  RIGHT = 'right',
+  MIDDLE = 'middle',
+}
+export interface ClickOptions {
+  /** defaults to left */
+  button?: MouseButtons
+  /** defaults to 1 */
+  clickCount?: number
+  /**
+   * Time to wait between mousedown and mouseup in milliseconds.
+   * Defaults to 0.
+   */
+  delay?: number
+}
+
+/** Defines the screenshot options. */
+export interface ScreenshotOptions {
+  /**
+   * The file path to save the image to. The screenshot type will be inferred from file extension.
+   * If `path` is a relative path, then it is resolved relative to current working directory.
+   * If no path is provided, the image won't be saved to the disk.
+   */
+  path?: string
+  /**
+   * The screenshot type.
+   * @default png
+   */
+  type?: 'jpeg' | 'png'
+  /** The quality of the image, between 0-100. Not applicable to png images. */
+  quality?: number
+  /**
+   * When true, takes a screenshot of the full scrollable page.
+   * @default false
+   */
+  fullPage?: boolean
+  /**
+   * An object which specifies clipping region of the page.
+   */
+  clip?: BoundingBox
+  /**
+   * Hides default white background and allows capturing screenshots with transparency.
+   * @default false
+   */
+  omitBackground?: boolean
+}
+
+export interface BoundingBox {
+  /** The x-coordinate of top-left corner. */
+  x: number
+  /** The y-coordinate of top-left corner. */
+  y: number
+  /** The width. */
+  width: number
+  /** The height. */
+  height: number
 }
