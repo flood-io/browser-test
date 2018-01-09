@@ -144,7 +144,7 @@ export declare class Driver {
   /**
    * Selects an option within a <select> tag using the value of the <option> element.
    */
-  public selectByValue(locatable: Locatable, value: string): Promise<void>
+  public selectByValue(locatable: Locatable, ...values: string[]): Promise<void>
 
   /**
    * Selects an option within a <select> tag by its index in the list.
@@ -182,6 +182,11 @@ export declare class Driver {
       delay?: number
     },
   ): Promise<void>
+
+  /**
+   * Takes a screenshot of the whole page and saves it to the results folder with a random sequential name.
+   */
+  public takeScreenshot(options?: ScreenshotOptions): Promise<void>
 
   /**
    * Uses the provided locator to find the first element it matches, returning an ElementHandle.
@@ -358,47 +363,59 @@ declare class Until {
    * Creates a condition that will wait for the given element to be disabled
    * @param selectorOrLocator
    */
-  static elementIsDisabled(selectorOrLocator: ElementHandle | Locator | string): Condition
+  static elementIsDisabled(locatable: Locatable): Condition
 
   /**
    * Creates a condition that will wait for the given element to be enabled
    * @param selectorOrLocator
    */
-  static elementIsEnabled(selectorOrLocator: ElementHandle | Locator | string): Condition
+  static elementIsEnabled(locatable: Locatable): Condition
 
   /**
    * Creates a condition that will wait for the given element to be deselected.
    * @param selectorOrLocator
    */
-  static elementIsSelected(selectorOrLocator: ElementHandle | Locator | string): Condition
+  static elementIsSelected(locatable: Locatable): Condition
 
   /**
    * Creates a condition that will wait for the given element to be in the DOM, yet not visible to the user
    * @param selectorOrLocator
    */
-  static elementIsNotSelected(selectorOrLocator: ElementHandle | Locator | string): Condition
+  static elementIsNotSelected(locatable: Locatable): Condition
 
   /**
    * Creates a condition that will wait for the given element to be selected.
    * @param selectorOrLocator
    */
-  static elementIsVisible(selectorOrLocator: ElementHandle | Locator | string): Condition
+  static elementIsVisible(locatable: Locatable): Condition
 
   /**
    * Creates a condition that will wait for the given element to become visible.
    * @param selectorOrLocator
    */
-  static elementIsNotVisible(selectorOrLocator: ElementHandle | Locator | string): Condition
-  static elementLocated(selectorOrLocator: ElementHandle | Locator | string): Condition
-  static elementTextContains(
-    selectorOrLocator: ElementHandle | Locator | string,
-    text: string,
-  ): Condition
-  static elementTextIs(selectorOrLocator: ElementHandle | Locator | string, text: string): Condition
-  static elementTextMatches(
-    selectorOrLocator: ElementHandle | Locator | string,
-    regex: RegExp,
-  ): Condition
+  static elementIsNotVisible(locatable: Locatable): Condition
+
+  /**
+   * Creates a condition which will wait until the element is located on the page.
+   */
+  static elementLocated(locatable: Locatable): Condition
+
+  /**
+   * Creates a condition which will wait until the element's text content contains
+   * the target text.
+   */
+  static elementTextContains(locatable: Locatable, text: string): Condition
+
+  /**
+   * Creates a condition which will wait until the element's text exactly matches the target text,
+   * excluding leading and trailing whitespace.
+   */
+  static elementTextIs(locatable: Locatable, text: string): Condition
+
+  /**
+   * Creates a condition which will wait until the element's text matches the target Regular Expression.
+   */
+  static elementTextMatches(locatable: Locatable, regex: RegExp): Condition
 
   /**
    * Creates a condition that will loop until at least one element is found with the given locator.
