@@ -144,17 +144,17 @@ export declare class Driver {
   /**
    * Selects an option within a <select> tag using the value of the <option> element.
    */
-  public selectByValue(locatable: Locatable, ...values: string[]): Promise<void>
+  public selectByValue(locatable: Locatable, ...values: string[]): Promise<string[]>
 
   /**
    * Selects an option within a <select> tag by its index in the list.
    */
-  public selectByIndex(locatable: Locatable, index: string): Promise<void>
+  public selectByIndex(locatable: Locatable, index: string): Promise<string[]>
 
   /**
    * Selects an option within a <select> tag by matching its visible text.
    */
-  public selectByText(locatable: Locatable, text: string): Promise<void>
+  public selectByText(locatable: Locatable, text: string): Promise<string[]>
 
   /**
    * Clears the selected value of an input or select control.
