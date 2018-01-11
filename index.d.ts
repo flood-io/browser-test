@@ -197,6 +197,11 @@ export declare class Driver {
    * Uses the provided locator to find all elements matching the locator condition, returning an array of ElementHandles
    */
   public findAllElements(locator: string | Locator): Promise<ElementHandle[]>
+
+  /**
+   * Switch the focus of the browser to another frame or window
+   */
+  public switchTo(): TargetLocator
 }
 
 declare class ElementHandle {
@@ -273,6 +278,33 @@ declare class ElementHandle {
   public size(): Promise<{ width: number; height: number }>
 
   public location(): Promise<{ x: number; y: number }>
+}
+
+declare class TargetLocator {
+  /**
+   * Locates the DOM element on the current page that corresponds to
+   * `document.activeElement` or `document.body` if the active element is not
+   * available.
+   */
+  public activeElement(): Promise<ElementHandle>
+
+  /**
+   * Navigates to the topmost frame
+   */
+  public defaultContent(): Promise<void>
+
+  /**
+   * Changes the active target to another frame.
+   *
+   * Accepts either:
+   *
+   * number: Switch to frame by index in window.frames,
+   * string: Switch to frame by frame.name or frame.id, whichever matches first,
+   * ElementHandle: Switch to a frame using the supplied ElementHandle of a frame.
+   *
+   * @param id number | string | ElementHandle
+   */
+  public frame(id: number | string | ElementHandle)
 }
 
 declare class Condition {}
