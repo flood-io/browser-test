@@ -111,9 +111,14 @@ export declare function step(
 
 export declare class Driver {
   /**
-   * Clears browser cookies.
+   * Clear browser cookies.
    */
-  public clearCookies(): Promise<void>
+  public clearBrowserCookies(): Promise<any>
+
+  /**
+   * Clear browser cache.
+   */
+  public clearBrowserCache(): Promise<any>
 
   /**
    * Force
