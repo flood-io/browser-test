@@ -1,8 +1,7 @@
-// Type definitions for @flood/browser-test 0.1.0
-// Project: browser-test
+// Type definitions for @flood/chrome 0.1.12
+// Project: @flood/chrome
 // Definitions by: Ivan Vanderbyl <github.com/ivanvanderbyl>
 
-export as namespace BrowserTest
 export interface TestSettings {
   /**
    * Maximum duration to run this for, regardless of other timeouts specified on Flood.
