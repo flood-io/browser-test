@@ -51,6 +51,13 @@ export interface TestSettings {
   clearCookies?: boolean
 
   /**
+   * Specifies whether Brwoser cache should be cleared after each loop.
+   *
+   * @default false
+   */
+  clearCache?: boolean
+
+  /**
    * Speicifies the name of the test specified in the comments section
    */
   name?: string
@@ -121,9 +128,14 @@ export declare class Driver {
   public clearBrowserCache(): Promise<any>
 
   /**
-   * Force
+   * Configure Browser to emulate a given device
    */
-  public emulateDevice(deviceName: string): Promise<void>
+  public emulateDevice(deviceName: Device): Promise<void>
+
+  /**
+   * Set Browser to send a custom User Agent (UA) string
+   */
+  public setUserAgent(userAgent: string): Promise<void>
 
   /**
    * Instructs the browser to navigate to a specific page. This is typically used as the
