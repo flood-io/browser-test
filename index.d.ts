@@ -3,7 +3,7 @@
 // Definitions by: Ivan Vanderbyl <github.com/ivanvanderbyl>
 
 export as namespace BrowserTest
-export interface TestOptions {
+export interface TestSettings {
   /**
    * Maximum duration to run this for, regardless of other timeouts specified on Flood.
    *
@@ -32,6 +32,11 @@ export interface TestOptions {
    * Specifies a custom User Agent (UA) string to send.
    */
   userAgent?: string
+
+  /**
+   * Specifies a device to emulate with browser device emulation.
+   */
+  device?: string
 
   /**
    * Global wait timeout applied to all wait tasks
@@ -86,9 +91,9 @@ export interface StepOptions {
  * Declares the settings for the test
  *
  * @export
- * @param {TestOptions} settings
+ * @param {TestSettings} settings
  */
-export declare function setup(settings: TestOptions): void
+export declare function setup(settings: TestSettings): void
 
 /**
  * Declares each step in your test. This must go within the callback from `test()`.
@@ -109,6 +114,11 @@ export declare class Driver {
    * Clears browser cookies.
    */
   public clearCookies(): Promise<void>
+
+  /**
+   * Force
+   */
+  public emulateDevice(deviceName: string): Promise<void>
 
   /**
    * Instructs the browser to navigate to a specific page. This is typically used as the
@@ -459,15 +469,39 @@ declare class Until {
    * An element is considered stale once it is removed from the DOM, or a new page has loaded.
    */
   static stalenessOf(selectorOrLocator: Locator | string): Condition
+
+  /**
+   * Creates a condition which waits until the page title contains the expected text.
+   */
   static titleContains(title: string): Condition
+
+  /**
+   * Creates a condition which waits until the page title exactly matches the expected text.
+   */
   static titleIs(title: string): Condition
+
+  /**
+   * Creates a condition which waits until the page title matches the title `RegExp`.
+   */
   static titleMatches(title: RegExp): Condition
+
+  /**
+   * Creates a condition which waits until the page URL contains the expected path.
+   */
   static urlContains(url: string): Condition
+
+  /**
+   * Creates a condition which waits until the page URL exactly matches the expected URL.
+   */
   static urlIs(url: string): Condition
+
+  /**
+   * Creates a condition which waits until the page URL matches the supplied `RegExp`.
+   */
   static urlMatches(url: RegExp): Condition
 }
 
-export type Locatable = Locator | ElementHandle | string
+export type Locatable = Locator | string
 
 export enum Key {
   NULL,
@@ -606,4 +640,63 @@ export interface BoundingBox {
   width: number
   /** The height. */
   height: number
+}
+
+/**
+ * Chrome DevTools Device Emulation
+ */
+export enum Device {
+  'blackberryPlayBook' = 'Blackberry PlayBook',
+  'blackberryPlayBookLandscape' = 'Blackberry PlayBook landscape',
+  'blackBerryZ30' = 'BlackBerry Z30',
+  'blackBerryZ30Landscape' = 'BlackBerry Z30 landscape',
+  'galaxyNote_3' = 'Galaxy Note 3',
+  'galaxyNote_3Landscape' = 'Galaxy Note 3 landscape',
+  'galaxyNoteIi' = 'Galaxy Note II',
+  'galaxyNoteIiLandscape' = 'Galaxy Note II landscape',
+  'galaxySIii' = 'Galaxy S III',
+  'galaxySIiiLandscape' = 'Galaxy S III landscape',
+  'galaxyS5' = 'Galaxy S5',
+  'galaxyS5Landscape' = 'Galaxy S5 landscape',
+  'iPad' = 'iPad',
+  'iPadLandscape' = 'iPad landscape',
+  'iPadMini' = 'iPad Mini',
+  'iPadMiniLandscape' = 'iPad Mini landscape',
+  'iPadPro' = 'iPad Pro',
+  'iPadProLandscape' = 'iPad Pro landscape',
+  'iPhone4' = 'iPhone 4',
+  'iPhone4Landscape' = 'iPhone 4 landscape',
+  'iPhone5' = 'iPhone 5',
+  'iPhone5Landscape' = 'iPhone 5 landscape',
+  'iPhone6' = 'iPhone 6',
+  'iPhone6Landscape' = 'iPhone 6 landscape',
+  'iPhone6Plus' = 'iPhone 6 Plus',
+  'iPhone6PlusLandscape' = 'iPhone 6 Plus landscape',
+  'iPhoneX' = 'iPhone X',
+  'iPhoneXLandscape' = 'iPhone X landscape',
+  'kindleFireHdx' = 'Kindle Fire HDX',
+  'kindleFireHdxLandscape' = 'Kindle Fire HDX landscape',
+  'lgOptimusL70' = 'LG Optimus L70',
+  'lgOptimusL70Landscape' = 'LG Optimus L70 landscape',
+  'microsoftLumia550' = 'Microsoft Lumia 550',
+  'microsoftLumia950' = 'Microsoft Lumia 950',
+  'microsoftLumia950Landscape' = 'Microsoft Lumia 950 landscape',
+  'nexus10' = 'Nexus 10',
+  'nexus10Landscape' = 'Nexus 10 landscape',
+  'nexus4' = 'Nexus 4',
+  'nexus4Landscape' = 'Nexus 4 landscape',
+  'nexus5' = 'Nexus 5',
+  'nexus5Landscape' = 'Nexus 5 landscape',
+  'nexus5X' = 'Nexus 5X',
+  'nexus5XLandscape' = 'Nexus 5X landscape',
+  'nexus6' = 'Nexus 6',
+  'nexus6Landscape' = 'Nexus 6 landscape',
+  'nexus6P' = 'Nexus 6P',
+  'nexus6PLandscape' = 'Nexus 6P landscape',
+  'nexus7' = 'Nexus 7',
+  'nexus7Landscape' = 'Nexus 7 landscape',
+  'nokiaLumia_520' = 'Nokia Lumia 520',
+  'nokiaLumia_520Landscape' = 'Nokia Lumia 520 landscape',
+  'nokiaN9' = 'Nokia N9',
+  'nokiaN9Landscape' = 'Nokia N9 landscape',
 }
