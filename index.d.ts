@@ -710,3 +710,38 @@ export enum Device {
 	'nokiaN9' = 'Nokia N9',
 	'nokiaN9Landscape' = 'Nokia N9 landscape',
 }
+
+export function assert(value: boolean, message?: string)
+export namespace assert {
+	export class AssertionError {
+		name: string
+		message: string
+		actual: any
+		expected: any
+		operator: string
+		generatedMessage: boolean
+		stack: string[]
+		isFailure: boolean
+
+		constructor(options?: {
+			message?: string
+			actual?: any
+			expected?: any
+			operator?: string
+			stackStartFunction?: Function
+		})
+	}
+
+	export function fail(message: string): void
+	export function fail(actual: any, expected: any, message?: string, operator?: string): void
+	export function ok(value: any, message?: string): void
+	export function equal(actual: any, expected: any, message?: string): void
+	export function notEqual(actual: any, expected: any, message?: string): void
+	export function deepEqual(actual: any, expected: any, message?: string): void
+	export function notDeepEqual(acutal: any, expected: any, message?: string): void
+	export function strictEqual(actual: any, expected: any, message?: string): void
+	export function notStrictEqual(actual: any, expected: any, message?: string): void
+	export function deepStrictEqual(actual: any, expected: any, message?: string): void
+	export function notDeepStrictEqual(actual: any, expected: any, message?: string): void
+	export function ifError(value: any): void
+}
