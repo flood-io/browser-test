@@ -24,13 +24,7 @@
 	"devDependencies": {
 		"npm-release": "^1.0.0"
 	},
-	"keywords": [
-		"load-testing",
-		"browser-testing",
-		"bdd",
-		"tdd",
-		"performance"
-	],
+	"keywords": ["load-testing", "browser-testing", "bdd", "tdd", "performance"],
 	"prettier": {
 		"semi": false,
 		"singleQuote": true,

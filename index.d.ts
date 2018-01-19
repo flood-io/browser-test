@@ -57,6 +57,11 @@ export interface TestSettings {
 	clearCache?: boolean
 
 	/**
+	 * Disables browser request cache for all requests.
+	 */
+	disableCache?: boolean
+
+	/**
 	 * Speicifies the name of the test specified in the comments section
 	 */
 	name?: string
@@ -81,20 +86,16 @@ export interface TestSettings {
 
 export interface StepOptions {
 	/**
-	 * Take a screenshot on failure.
-	 * @default true
-	 */
-	screenshotOnFailure?: boolean
-
-	/**
 	 * Timeout in seconds for all wait and navigation operations.
 	 * @default `30` seconds
 	 */
-	timeout?: number
+	waitTimeout?: number
 }
 
 /**
  * Declares the settings for the test
+ *
+ * Example: setup({ waitTimeout: 60 })
  *
  * @export
  * @param {TestSettings} settings
@@ -108,12 +109,10 @@ export declare function setup(settings: TestSettings): void
  * @param {string} name Step Name
  * @param {(driver: Driver) => Promise<void>} fn Actual implementation of step
  */
-export declare function step(name: string, fn: (driver: Driver) => Promise<void>)
-export declare function step(
-	name: string,
-	options: StepOptions,
-	fn: (driver: Driver) => Promise<void>,
-)
+export declare function step(name: string, fn: StepFunction)
+export declare function step(name: string, options: StepOptions, fn: StepFunction)
+
+export type StepFunction = (driver: Driver) => Promise<void>
 
 export declare class Driver {
 	/**
