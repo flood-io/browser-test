@@ -1,6 +1,6 @@
 {
 	"name": "@flood/chrome",
-	"version": "0.1.15",
+	"version": "0.1.16",
 	"private": false,
 	"description": "Flood Chrome provides an API for scripting Browser Level Load Tests",
 	"types": "./index.d.ts",
@@ -24,7 +24,13 @@
 	"devDependencies": {
 		"npm-release": "^1.0.0"
 	},
-	"keywords": ["load-testing", "browser-testing", "bdd", "tdd", "performance"],
+	"keywords": [
+		"load-testing",
+		"browser-testing",
+		"bdd",
+		"tdd",
+		"performance"
+	],
 	"prettier": {
 		"semi": false,
 		"singleQuote": true,
