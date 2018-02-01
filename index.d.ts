@@ -109,8 +109,8 @@ export declare function setup(settings: TestSettings): void
  * @param {string} name Step Name
  * @param {(driver: Driver) => Promise<void>} fn Actual implementation of step
  */
-export declare function step(name: string, fn: StepFunction)
-export declare function step(name: string, options: StepOptions, fn: StepFunction)
+export declare function step(name: string, fn: StepFunction): void
+export declare function step(name: string, options: StepOptions, fn: StepFunction): void
 
 export type StepFunction = (driver: Driver) => Promise<void>
 
@@ -323,7 +323,7 @@ declare class TargetLocator {
 	 *
 	 * @param id number | string | ElementHandle
 	 */
-	public frame(id: number | string | ElementHandle)
+	public frame(id: number | string | ElementHandle): Promise<void>
 }
 
 declare class Condition {}
@@ -710,7 +710,7 @@ export enum Device {
 	'nokiaN9Landscape' = 'Nokia N9 landscape',
 }
 
-export function assert(value: boolean, message?: string)
+export function assert(value: boolean, message?: string): void
 export namespace assert {
 	export class AssertionError {
 		name: string
