@@ -1,15 +1,13 @@
 {
 	"name": "@flood/chrome",
-	"version": "0.1.17",
+	"version": "0.2.0",
 	"private": false,
-	"description":
-		"Flood Chrome provides an API for scripting Browser Level Load Tests",
+	"description": "Flood Chrome provides an API for scripting Browser Level Load Tests",
 	"types": "./index.d.ts",
 	"scripts": {
 		"release": "npm-release",
 		"doc": "yarn typedoc && ts-node ./utils/docs.ts",
-		"docs":
-			"node --trace-warnings $(npm bin)/nodemon --ext ts --exec ts-node -- ./utils/docs.ts",
+		"docs": "node --trace-warnings $(npm bin)/nodemon --ext ts --exec ts-node -- ./utils/docs.ts",
 		"typedoc": "typedoc --json docs.json --includeDeclarations  ./index.d.ts"
 	},
 	"repository": {
