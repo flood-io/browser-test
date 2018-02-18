@@ -1,0 +1,49 @@
+# Documentation
+
+[Quick Start]#/README.md
+
+# API
+
+* [Device](api/Interfaces.md)
+* [Key](api/Interfaces.md)
+* [MouseButtons](api/Interfaces.md)
+* [Browser](api/Browser.md)
+* [By](api/By.md)
+* [Condition](api/Condition.md)
+* [ElementHandle](api/ElementHandle.md)
+* [Locator](api/Locator.md)
+* [TargetLocator](api/TargetLocator.md)
+* [Until](api/Until.md)
+* [BoundingBox](api/Interfaces.md)
+* [ClickOptions](api/Interfaces.md)
+* [NavigationOptions](api/Interfaces.md)
+* [ScreenshotOptions](api/Interfaces.md)
+* [StepOptions](api/Interfaces.md)
+* [TestSettings](api/Interfaces.md)
+* [Driver](api/Interfaces.md)
+* [Locatable](api/Interfaces.md)
+* [StepFunction](api/Interfaces.md)
+* [setup](api/Functions.md)
+* [step](api/Functions.md)
+
+[device]: api/Interfaces.md
+[key]: api/Interfaces.md
+[mousebuttons]: api/Interfaces.md
+[browser]: api/Browser.md
+[by]: api/By.md
+[condition]: api/Condition.md
+[elementhandle]: api/ElementHandle.md
+[locator]: api/Locator.md
+[targetlocator]: api/TargetLocator.md
+[until]: api/Until.md
+[boundingbox]: api/Interfaces.md
+[clickoptions]: api/Interfaces.md
+[navigationoptions]: api/Interfaces.md
+[screenshotoptions]: api/Interfaces.md
+[stepoptions]: api/Interfaces.md
+[testsettings]: api/Interfaces.md
+[driver]: api/Interfaces.md
+[locatable]: api/Interfaces.md
+[stepfunction]: api/Interfaces.md
+[setup]: api/Functions.md
+[step]: api/Functions.md
