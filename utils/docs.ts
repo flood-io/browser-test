@@ -2,7 +2,8 @@ import { HtmlRenderer, Parser } from 'commonmark'
 import { join, dirname, resolve, normalize, relative } from 'path'
 import * as table from 'markdown-table'
 import * as camelcase from 'lodash.camelcase'
-
+import * as glob from 'glob'
+import * as frontMatter from 'front-matter'
 import {
 	mkdirpSync,
 	copySync,
@@ -148,6 +149,7 @@ class MarkdownDocument {
 		public path: string,
 		public lines: string[] = [],
 		public referencesNeeded: string[] = [],
+		public enableReferences = true,
 	) {}
 
 	public writeLine(text: string = '') {
@@ -198,6 +200,7 @@ class MarkdownDocument {
 	}
 
 	public applyReferences(references: RefsMap) {
+		if (!this.enableReferences) return
 		let refs: RefsMap = new Map()
 
 		this.referencesNeeded.forEach(ref => {
@@ -260,9 +263,7 @@ class DocsParser {
 
 	constructor(public docsJSON: string) {
 		mkdirpSync(bookDir)
-		// emptyDirSync(bookDir)
 		copySync(join(root, 'README.md'), join(bookDir, 'README.md'))
-		// copySync(join(root, 'docs', 'code-snippet.png'), join(bookDir, 'code-snippet.png'))
 
 		for (const [key, target] of Object.entries(internalRefs)) {
 			this.references.set(key, { target })
@@ -310,10 +311,11 @@ class DocsParser {
 
 			if (!this.summaryParts.has(child.name))
 				this.summaryParts.set(child.name, [])
+			console.log(doc.path)
 			this.summaryParts.get(child.name).push(`[${child.name}](${doc.path})`)
 		})
 
-		this.writeSummary()
+		this.createSummary()
 		this.writeDocsToFiles()
 	}
 
@@ -339,27 +341,34 @@ class DocsParser {
 		this.references.set(name, { target, title })
 	}
 
-	private writeSummary() {
+	private createSummary() {
 		let doc = new MarkdownDocument('SUMMARY.md')
+		doc.enableReferences = false
 		doc.writeHeading('Documentation', 1)
 		doc.writeLine('')
-		doc.writeLine('[Quick Start]#/README.md')
+		doc.writeLine('[Quick Start](README.md)')
+
+		// Adds everything in the examples directory
+		let examples = glob.sync('docs/examples/**/*.md')
+		examples.forEach(file => {
+			let content = readFileSync(file).toString('utf8')
+			let { title } = frontMatter(content).attributes
+			if (title) {
+				let relativePath = relative(bookDir, file)
+				doc.writeLine(`[${title}](${relativePath})`)
+			}
+		})
+
 		doc.writeLine('')
 
 		doc.writeHeading('API', 1)
 		this.summaryParts.forEach((methods, name) => {
-			// doc.writeHeading(name, 2)
-			// doc.writeBullet(name, 1)
 			methods.forEach(m => {
 				doc.writeBullet(m, 2)
 			})
-			// doc.writeLine('')
 		})
 
 		this.docs.set('Index', [doc])
-
-		// let content = doc.toString()
-		// writeFileSync(join(bookDir, 'SUMMARY.md'), content)
 
 		doc = new MarkdownDocument('Enumerations.md')
 		doc.writeHeading('Enumerations')
@@ -367,13 +376,6 @@ class DocsParser {
 			'Here you will find a list of all the possible values for fields which accept a typed enumerated property, such as `userAgent` or `click()`',
 		)
 		this.docs.get('Enumeration').unshift(doc)
-
-		// writeFileSync(
-		// 	join(bookDir, 'api', 'Enumerations.md'),
-		// 	this.enumerations.map(doc => doc.toString()).join('\n\n'),
-		// )
-
-		// console.log(doc.toString())
 	}
 
 	private processCallSignature(doc, sig, prefix?) {
@@ -415,14 +417,6 @@ class DocsParser {
 		this.writeCallSignature(doc, name, sig.comment, params, type)
 	}
 
-	// #### page.click(selector[, options])
-	// - `selector` <[string]> A [selector] to search for element to click. If there are multiple elements satisfying the selector, the first will be clicked.
-	// - `options` <[Object]>
-	//   - `button` <[string]> `left`, `right`, or `middle`, defaults to `left`.
-	//   - `clickCount` <[number]> defaults to 1. See [UIEvent.detail].
-	//   - `delay` <[number]> Time to wait between `mousedown` and `mouseup` in milliseconds. Defaults to 0.
-	// - returns: <[Promise]> Promise which resolves when the element matching `selector` is successfully clicked. The Promise will be rejected if there is no element matching `selector`.
-	//
 	private writeCallSignature(
 		doc: MarkdownDocument,
 		name: string,
