@@ -381,7 +381,7 @@ class DocsParser {
 	private createSummary() {
 		let doc = new MarkdownDocument('SUMMARY.md')
 		doc.enableReferences = false
-		doc.writeHeading('Documentation', 1)
+		doc.writeHeading('Documentation', 2)
 		doc.writeLine('')
 		doc.writeBullet('[Quick Start](README.md)')
 
@@ -398,7 +398,9 @@ class DocsParser {
 
 		doc.writeLine('')
 
-		doc.writeBullet('Flood Chrome API', 1)
+		doc.writeHeading('Flood Chrome API', 2)
+		doc.writeLine('')
+
 		let sortedMethods = []
 
 		this.summaryParts.forEach((methods, name) => {
