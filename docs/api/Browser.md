@@ -1,4 +1,3 @@
--------
 # `Browser`
 
 Browser (also called Driver) is the main entry point in each <[step]>, it's your direct connection to the browser running the test.
@@ -182,26 +181,13 @@ You can use either a numeric value in seconds to wait for a specific time,
 or a <[Condition]>, for more flexible conditions.
 
 
-Browser (also called Driver) is the main entry point in each <[step]>, it's your direct connection to the browser running the test.
-
-```typescript
-import { step } from "@flood/chrome"
-export default () => {
-  step("Start", async browser => {
-    await browser.visit("https://challenge.flood.io")
-  })
-}
-```
-
-
-
-[step]: Functions.md
-[Locatable]: Interfaces.md
+[step]: Functions.md#step
+[Locatable]: Interfaces.md#locatable
 [Promise]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise
-[ClickOptions]: Interfaces.md
-[Device]: Interfaces.md
-[Locator]: Locator.md
-[TargetLocator]: TargetLocator.md
-[ScreenshotOptions]: Interfaces.md
-[NavigationOptions]: Interfaces.md
-[Condition]: Condition.md
+[ClickOptions]: Interfaces.md#clickoptions
+[Device]: Interfaces.md#device
+[Locator]: Locator.md#locator
+[TargetLocator]: TargetLocator.md#targetlocator
+[ScreenshotOptions]: Interfaces.md#screenshotoptions
+[NavigationOptions]: Interfaces.md#navigationoptions
+[Condition]: Condition.md#condition
