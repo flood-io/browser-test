@@ -383,7 +383,7 @@ class DocsParser {
 		doc.enableReferences = false
 		doc.writeHeading('Documentation', 1)
 		doc.writeLine('')
-		doc.writeLine('[Quick Start](README.md)')
+		doc.writeBullet('[Quick Start](README.md)')
 
 		// Adds everything in the examples directory
 		let examples = glob.sync('docs/examples/**/*.md')
@@ -392,18 +392,27 @@ class DocsParser {
 			let { title } = frontMatter(content).attributes
 			if (title) {
 				let relativePath = relative(bookDir, file)
-				doc.writeLine(`[${title}](${relativePath})`)
+				doc.writeBullet(`[${title}](${relativePath})`)
 			}
 		})
 
 		doc.writeLine('')
 
-		doc.writeHeading('Flood Chrome API', 1)
+		doc.writeBullet('Flood Chrome API', 1)
+		let sortedMethods = []
+
 		this.summaryParts.forEach((methods, name) => {
 			methods.forEach(m => {
-				doc.writeBullet(m, 2)
+				sortedMethods.push(m)
 			})
 		})
+
+		sortedMethods
+			.sort()
+			// .sort((a, b) => a.toLowerCase() - b.toLowerCase())
+			.forEach(m => {
+				doc.writeBullet(m, 2)
+			})
 
 		this.docs.set('Index', [doc])
 
