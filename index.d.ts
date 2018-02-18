@@ -2,6 +2,21 @@
 // Project: @flood/chrome
 // Definitions by: Ivan Vanderbyl <github.com/ivanvanderbyl>
 
+/**
+ * This interface specifies the available options you can use to configure how your test runs. These properties should be exported using the property `settings`.
+ *
+ * **Example:**
+ *
+ * ```typescript
+ * export const settings = {
+ *   loopCount: Infinity,
+ *   clearCache: true
+ * }
+ * ```
+ *
+ * @export
+ * @interface TestSettings
+ */
 export interface TestSettings {
 	/**
 	 * Maximum duration to run this for, regardless of other timeouts specified on Flood.
@@ -84,26 +99,62 @@ export interface TestSettings {
 	DOMSnapshotOnFailure?: boolean
 }
 
+/**
+ * Specifies the available options which can be supplied to a step to override global settings.
+ *
+ * **Example:**
+ *
+ * ```typescript
+ * step("Step 1", { waitTimeout: 300 }, async browser => {
+ * 	await browser.click(...)
+ * })
+ * ```
+ *
+ * @export
+ * @interface StepOptions
+ */
 export interface StepOptions {
 	/**
-	 * Timeout in seconds for all wait and navigation operations.
+	 * Timeout in seconds for all wait and navigation operations within this <[step]>.
 	 * @default `30` seconds
 	 */
 	waitTimeout?: number
 }
 
 /**
- * Declares the settings for the test
+ * Declares the settings for the test, overriding settings exported at the top of the test.
  *
- * Example: setup({ waitTimeout: 60 })
+ * _This is a secondary syntax to `export const settings = {}` which functions exactly the same way.
  *
+ * **Example:**
+ *
+ * ```typescript
+ * export default () => {
+ *  setup({ waitTimeout: 60 })
+ * }
+ * ```
+
  * @export
  * @param {TestSettings} settings
  */
 export declare function setup(settings: TestSettings): void
 
 /**
- * Declares each step in your test. This must go within the callback from `test()`.
+ * Declares each step in your test. This must go within your main test expression.
+ *
+ * **Example:**
+ *
+ * ```typescript
+ * export default () => {
+ *   step("Step 1", async browser => {
+ *     await browser.visit("https://example.com")
+ *   })
+ *
+ *   step("Step 2", async browser => {})
+ *
+ *   step("Step 3", async browser => {})
+ * }
+ * ```
  *
  * @export
  * @param {string} name Step Name
@@ -112,9 +163,25 @@ export declare function setup(settings: TestSettings): void
 export declare function step(name: string, fn: StepFunction): void
 export declare function step(name: string, options: StepOptions, fn: StepFunction): void
 
-export type StepFunction = (driver: Driver) => Promise<void>
+/**
+ * The standard interface for defining the callback for a <[step]>.
+ */
+export type StepFunction = (browser: Driver) => Promise<void>
 
-export declare class Driver {
+/**
+ * Browser (also called Driver) is the main entry point in each <[step]>, it's your direct connection to the browser running the test.
+ *
+ * ```typescript
+ * import { step } from "@flood/chrome"
+ * export default () => {
+ *   step("Start", async browser => {
+ *     await browser.visit("https://challenge.flood.io")
+ *   })
+ * }
+ * ```
+ *
+ */
+export declare class Browser {
 	/**
 	 * Clear browser cookies.
 	 */
@@ -140,6 +207,14 @@ export declare class Driver {
 	 * entrypoint to your test, as the first instruction it is also responsible for creating
 	 * a new Browser tab for this page to load into.
 	 *
+	 * **Example:**
+	 *
+	 * ```typescript
+	 * step("Start", async browser => {
+	 *   await browser.visit("https://example.com")
+	 * })
+	 * ```
+	 *
 	 * @param {string} url
 	 * @returns {Promise<void>}
 	 * @memberof Driver
@@ -147,18 +222,37 @@ export declare class Driver {
 	public visit(url: string, options?: NavigationOptions): Promise<void>
 
 	/**
-	 * Creates a waiter which will pause the test until a condition is met or a timeout is reached.
+	 * Creates a waiter which will pause the test until a condition is met or a timeout is reached. This can be used for validation or control flow.
+	 *
+	 * **Example:**
+	 *
+	 * ```typescript
+	 * step("Start", async browser => {
+	 *   await browser.wait(Until.elementIsVisible(By.css('h1.title')))
+	 * })
+	 * ```
 	 *
 	 * You can use either a numeric value in seconds to wait for a specific time,
-	 * or a {@linkcode Condition}, for more flexible conditions.
+	 * or a <[Condition]>, for more flexible conditions.
 	 */
 	public wait(timeoutOrCondition: Condition | number): Promise<boolean>
 
 	/**
 	 * Sends a click event to the element located at `selector`. If the element is
 	 * currently outside the viewport it will first scroll to that element.
+	 *
+	 * **Example:**
+	 *
+	 * ```typescript
+	 * step("Start", async browser => {
+	 *   await browser.click(By.partialLinkText('Start'))
+	 * })
+	 * ```
+	 *
+	 * In this example we're constructing a <[Locatable]> using the `By.partialLinkText()` Locator, which will match the first `<a>` tag which contains the text "Start".
+	 *
 	 */
-	public click(selectorOrLocator: string | Locator, options?: ClickOptions): Promise<void>
+	public click(locatable: Locatable, options?: ClickOptions): Promise<void>
 
 	/**
 	 * Sends a double-click event to the element located by the supplied Locator or `selector`. If the element is
@@ -167,17 +261,17 @@ export declare class Driver {
 	public doubleClick(locatable: Locatable, options?: ClickOptions): Promise<void>
 
 	/**
-	 * Selects an option within a <select> tag using the value of the <option> element.
+	 * Selects an option within a `<select>` tag using the value of the `<option>` element.
 	 */
 	public selectByValue(locatable: Locatable, ...values: string[]): Promise<string[]>
 
 	/**
-	 * Selects an option within a <select> tag by its index in the list.
+	 * Selects an option within a `<select>` tag by its index in the list.
 	 */
 	public selectByIndex(locatable: Locatable, index: string): Promise<string[]>
 
 	/**
-	 * Selects an option within a <select> tag by matching its visible text.
+	 * Selects an option within a `<select>` tag by matching its visible text.
 	 */
 	public selectByText(locatable: Locatable, text: string): Promise<string[]>
 
@@ -187,15 +281,43 @@ export declare class Driver {
 	public clear(locatable: Locatable): Promise<void>
 
 	/**
-	 * Types a string into an <input> control, key press by key press.
+	 * Types a string into an `<input>` control, key press by key press. Use this to fill inputs as though it was typed by the user.
+	 *
+	 * **Example:**
+	 * ```typescript
+	 * step("Step 1", async browser => {
+	 *   await browser.type(By.css("#email"), "user@example.com")
+	 * })
+	 * ```
+	 *
 	 */
 	public type(locatable: Locatable, text: string, options?: { delay: number }): Promise<void>
 
+	/**
+	 * Removes focus from the specified DOM element.
+	 *
+	 * @param {Locatable} locator
+	 * @returns {Promise<void>}
+	 * @memberof Driver
+	 */
 	public blur(locator: Locatable): Promise<void>
 
+	/**
+	 * Makes the element located by the first argument the receiver of future input.
+	 *
+	 * @param {Locatable} locator The <[Locator]> to use to find an element to send focus to.
+	 * @returns {Promise<void>}
+	 * @memberof Driver
+	 */
 	public focus(locator: Locatable): Promise<void>
 
+	/**
+	 * Presses a key on the keyboard specified by key code. For example, <[Key.ALT]>
+	 */
 	public press(
+		/**
+		 * The key code to send.
+		 */
 		keyCode: string,
 		options?: {
 			/**
@@ -209,7 +331,7 @@ export declare class Driver {
 	): Promise<void>
 
 	/**
-	 * Takes a screenshot of the whole page and saves it to the results folder with a random sequential name.
+	 * Takes a screenshot of the whole page and saves it to the `flood/results` folder with a random sequential name. You can download the archive of your test results at the end of the test to retrieve these screenshots.
 	 */
 	public takeScreenshot(options?: ScreenshotOptions): Promise<void>
 
@@ -224,11 +346,20 @@ export declare class Driver {
 	public findElements(locator: string | Locator): Promise<ElementHandle[]>
 
 	/**
-	 * Switch the focus of the browser to another frame or window
+	 * Switch the focus of the browser to another frame, tab, or window.
 	 */
 	public switchTo(): TargetLocator
 }
 
+export type Driver = Browser
+
+/**
+ * Example Handle represents a remote element in the DOM of the browser. It implements useful methods for querying and interacting with this DOM element.
+ *
+ * All methids on this class are asynchronous and must be used with `await` to wait for the result to fulfill from the browser.
+ *
+ * @class ElementHandle
+ */
 declare class ElementHandle {
 	/**
 	 * Fetches the value of an attribute on this element
@@ -248,8 +379,14 @@ declare class ElementHandle {
 	 */
 	public clear(): Promise<void>
 
+	/**
+	 * Sends a series of key modifiers to the element.
+	 */
 	public sendKeys(...keys: string[]): Promise<void>
 
+	/**
+	 * Sends a series of key presses to the element to simulate a user typing on the keyboard. Use this to fill in input fields.
+	 */
 	public type(text: string): Promise<void>
 
 	/**
@@ -268,25 +405,43 @@ declare class ElementHandle {
 	public takeScreenshot(options?: ScreenshotOptions): Promise<void>
 
 	/**
-	 * Locates an element using the supplied {@linkcode Locator}, returning an {@linkcode ElementHandle}
+	 * Locates an element using the supplied <[Locator]>, returning an <[ElementHandle]>
 	 */
 	public findElement(locator: string | Locator): Promise<ElementHandle | null>
 
 	/**
-	 * Locates all elements using the supplied {@linkcode Locator}, returning an array of {@linkcode ElementHandle}'s
+	 * Locates all elements using the supplied <[Locator]>, returning an array of <[ElementHandle]>'s
 	 */
 	public findElements(locator: Locator | string): Promise<ElementHandle[]>
 
+	/**
+	 * Fetches the remote elements `tagName` property.
+	 */
 	public tagName(): Promise<string | null>
 
+	/**
+	 * Fetches the remote elements `id` attribute.
+	 */
 	public getId(): Promise<string | null>
 
+	/**
+	 * If the remote element is selectable (such as an `<option>` or `input[type="checkbox"]`) this methos will indicate whether it is selected.
+	 */
 	public isSelected(): Promise<boolean>
 
+	/**
+	 * Checks whether the remote element is selectable. An element is selectable if it is an `<option>` or `input[type="checkbox"]` or radio button.
+	 */
 	public isSelectable(): Promise<boolean>
 
+	/**
+	 * Checks whether the remote element is displayed in the DOM and is visible to the user without being hidden by CSS or occluded by another element.
+	 */
 	public isDisplayed(): Promise<boolean>
 
+	/**
+	 * Checks whether the remote element is enabled. Typically this means it does not have a `disabled` property or attribute applied.
+	 */
 	public isEnabled(): Promise<boolean>
 
 	/**
@@ -294,11 +449,22 @@ declare class ElementHandle {
 	 */
 	public text(): Promise<string>
 
+	/**
+	 * Fetches the remote elements physical dimensions as `width` and `height`.
+	 */
 	public size(): Promise<{ width: number; height: number }>
 
+	/**
+	 * Fetches the remote elements physical location as `x` and `y`.
+	 */
 	public location(): Promise<{ x: number; y: number }>
 }
 
+/**
+ * The target locator is accessed through `browser.switchTo()` and enables you to switch frames, tabs, or browser windows. As well as access the `activeElement` or an alert box.
+ *
+ * @class TargetLocator
+ */
 declare class TargetLocator {
 	/**
 	 * Locates the DOM element on the current page that corresponds to
@@ -326,9 +492,25 @@ declare class TargetLocator {
 	public frame(id: number | string | ElementHandle): Promise<void>
 }
 
+/**
+ * A Condition represents a predicate which can be used to wait for an <[ElementHandle]>.
+ *
+ * @class Condition
+ */
 declare class Condition {}
+
+/**
+ * A Locator is a generic class constructed from a <[By]> method which can be used to find an Element or Elements on a page.
+ *
+ * @class Locator
+ */
 declare class Locator {}
 
+/**
+ * By is used to create <[Locator]>'s to find Elements or use in any place which accepts a Locator or <[Locatable]>.
+ *
+ * @class By
+ */
 declare class By {
 	/**
 	 * Locates an element using a CSS (jQuery) style selector
@@ -355,14 +537,21 @@ declare class By {
 	static linkText(text: string): Locator
 
 	/**
-	 * Locates a link (<a>) containing some of the specified text
+	 * Locates a link (`<a>` tag) containing some of the specified text.
+	 *
+	 * **Example:**
+	 * ```typescript
+	 * await browser.findElement(By.partialLinkText("Checkout"))
+	 * ```
+	 *
 	 * @param text
 	 */
 	static partialLinkText(text: string): Locator
 
 	/**
-	 * Locates all elements whose `textContent` equals the given
-	 * substring and is not hidden by CSS.
+	 * Locates all elements whose `textContent` equals the given substring and is not hidden by CSS.
+	 *
+	 * This selector works in multiple stages, by first finding the element matching the text predicate, and then testing whether it is visible ion the viewport and is not occluded by another element or style property.
 	 *
 	 * @param {string} text The string to check for in a elements's visible text.
 	 */
@@ -391,6 +580,13 @@ declare class By {
 	static xpath(path: string): Locator
 }
 
+/**
+ * Until is used to create wait <[Conditions]> which are used to wait for elements to become active, visible, invisible or disabled on the page.
+ *
+ * You would typically use these to control the flow of you test.
+ *
+ * @class Until
+ */
 declare class Until {
 	/**
 	 * Creates a condition that will wait until the input driver is able to switch to the designated frame.
@@ -412,37 +608,54 @@ declare class Until {
 
 	/**
 	 * Creates a condition that will wait for the given element to be disabled
-	 * @param selectorOrLocator
+	 * @param selectorOrLocator A <[Locatable]> to use to find the element.
 	 */
 	static elementIsDisabled(locatable: Locatable): Condition
 
 	/**
 	 * Creates a condition that will wait for the given element to be enabled
-	 * @param selectorOrLocator
+	 * @param selectorOrLocator A <[Locatable]> to use to find the element.
 	 */
 	static elementIsEnabled(locatable: Locatable): Condition
 
 	/**
 	 * Creates a condition that will wait for the given element to be deselected.
-	 * @param selectorOrLocator
+	 * @param selectorOrLocator A <[Locatable]> to use to find the element.
 	 */
 	static elementIsSelected(locatable: Locatable): Condition
 
 	/**
 	 * Creates a condition that will wait for the given element to be in the DOM, yet not visible to the user
-	 * @param selectorOrLocator
+	 * @param selectorOrLocator A <[Locatable]> to use to find the element.
 	 */
 	static elementIsNotSelected(locatable: Locatable): Condition
 
 	/**
 	 * Creates a condition that will wait for the given element to be selected.
-	 * @param selectorOrLocator
+	 *
+	 * Example:
+	 * ```typescript
+	 * step("Step 1", async browser => {
+	 *   await browser.wait(Until.elementIsVisible(By.partialLinkText("Start")))
+	 * })
+	 * ```
+	 *
+	 * @param selectorOrLocator A <[Locatable]> to use to find the element.
 	 */
 	static elementIsVisible(locatable: Locatable): Condition
 
 	/**
 	 * Creates a condition that will wait for the given element to become visible.
-	 * @param selectorOrLocator
+	 *
+	 * Example:
+	 * ```typescript
+	 * step("Step 1", async browser => {
+	 * 	 await browser.click(By.css('.hide-panel'))
+	 *   await browser.wait(Until.elementIsNotVisible(By.id("btn")))
+	 * })
+	 * ```
+	 *
+	 * @param selectorOrLocator A <[Locatable]> to use to find the element.
 	 */
 	static elementIsNotVisible(locatable: Locatable): Condition
 
@@ -452,14 +665,12 @@ declare class Until {
 	static elementLocated(locatable: Locatable): Condition
 
 	/**
-	 * Creates a condition which will wait until the element's text content contains
-	 * the target text.
+	 * Creates a condition which will wait until the element's text content contains the target text.
 	 */
 	static elementTextContains(locatable: Locatable, text: string): Condition
 
 	/**
-	 * Creates a condition which will wait until the element's text exactly matches the target text,
-	 * excluding leading and trailing whitespace.
+	 * Creates a condition which will wait until the element's text exactly matches the target text, excluding leading and trailing whitespace.
 	 */
 	static elementTextIs(locatable: Locatable, text: string): Condition
 
@@ -475,6 +686,7 @@ declare class Until {
 
 	/**
 	 * Creates a condition that will wait for the given element to become stale.
+	 *
 	 * An element is considered stale once it is removed from the DOM, or a new page has loaded.
 	 */
 	static stalenessOf(selectorOrLocator: Locator | string): Condition
@@ -510,8 +722,17 @@ declare class Until {
 	static urlMatches(url: RegExp): Condition
 }
 
+/**
+ * Locatable is the default type to use in place of a <[Locator]>. It can be a Locator or a CSS selector string.
+ */
 export type Locatable = Locator | string
 
+/**
+ * Lists all available keyboard control keys which can be used when sending a key press combination.
+ *
+ * @export
+ * @enum {number}
+ */
 export enum Key {
 	NULL,
 	CANCEL, // ^break
@@ -578,7 +799,9 @@ export enum Key {
 	META,
 }
 
-/** The navigation options. */
+/**
+ * This interface represents the available options to pass to <[Driver]>.visit()
+ */
 export interface NavigationOptions {
 	/**
 	 * Maximum navigation time in milliseconds, pass 0 to disable timeout.
@@ -592,11 +815,28 @@ export interface NavigationOptions {
 	waitUntil?: 'load' | 'domcontentloaded' | 'networkidle0' | 'networkidle2'
 }
 
+/**
+ * Specifies the available mouse buttons to use when clicking. The default is always `left`
+ */
 export enum MouseButtons {
+	// Left mouse button
 	LEFT = 'left',
+
+	// Right mouse button
 	RIGHT = 'right',
+
+	/**
+	 * Middle mouse button
+	 */
 	MIDDLE = 'middle',
 }
+
+/**
+ * Specifies the available options to send when clicking to modify the click behaviour. For example, to send a double click, set `clickCount: 2`.
+ *
+ * @export
+ * @interface ClickOptions
+ */
 export interface ClickOptions {
 	/** defaults to left */
 	button?: MouseButtons
@@ -708,39 +948,4 @@ export enum Device {
 	'nokiaLumia_520Landscape' = 'Nokia Lumia 520 landscape',
 	'nokiaN9' = 'Nokia N9',
 	'nokiaN9Landscape' = 'Nokia N9 landscape',
-}
-
-export function assert(value: boolean, message?: string): void
-export namespace assert {
-	export class AssertionError {
-		name: string
-		message: string
-		actual: any
-		expected: any
-		operator: string
-		generatedMessage: boolean
-		stack: string[]
-		isFailure: boolean
-
-		constructor(options?: {
-			message?: string
-			actual?: any
-			expected?: any
-			operator?: string
-			stackStartFunction?: Function
-		})
-	}
-
-	export function fail(message: string): void
-	export function fail(actual: any, expected: any, message?: string, operator?: string): void
-	export function ok(value: any, message?: string): void
-	export function equal(actual: any, expected: any, message?: string): void
-	export function notEqual(actual: any, expected: any, message?: string): void
-	export function deepEqual(actual: any, expected: any, message?: string): void
-	export function notDeepEqual(acutal: any, expected: any, message?: string): void
-	export function strictEqual(actual: any, expected: any, message?: string): void
-	export function notStrictEqual(actual: any, expected: any, message?: string): void
-	export function deepStrictEqual(actual: any, expected: any, message?: string): void
-	export function notDeepStrictEqual(actual: any, expected: any, message?: string): void
-	export function ifError(value: any): void
 }
