@@ -4,6 +4,7 @@ import * as table from 'markdown-table'
 import * as camelcase from 'lodash.camelcase'
 import * as glob from 'glob'
 import * as frontMatter from 'front-matter'
+import * as yaml from 'js-yaml'
 import {
 	mkdirpSync,
 	copySync,
@@ -27,6 +28,13 @@ function findReferences(text: string): string[] {
 	}
 
 	return []
+}
+
+function generateAnchor(name: string): string {
+	return name
+		.toLowerCase()
+		.replace(/\s+/gi, '-')
+		.replace(/[^a-z0-9-]/gi, '')
 }
 
 /**
@@ -150,7 +158,18 @@ class MarkdownDocument {
 		public lines: string[] = [],
 		public referencesNeeded: string[] = [],
 		public enableReferences = true,
+		public frontMatter: any = {},
 	) {}
+
+	static fromFile(path: string) {
+		let doc = new MarkdownDocument(path)
+		let content = readFileSync(path).toString('utf8')
+		let matter = frontMatter(content)
+		doc.frontMatter = matter.attributes
+		doc.lines = matter.body.split('\n')
+		doc.referencesNeeded = findReferences(matter.body)
+		return doc
+	}
 
 	public writeLine(text: string = '') {
 		this.referencesNeeded = [...this.referencesNeeded, ...findReferences(text)]
@@ -194,7 +213,7 @@ class MarkdownDocument {
 	}
 
 	public writeSection(name: string) {
-		this.writeLine(`-------`)
+		// this.writeLine(`-------`)
 		this.writeHeading(name, 1)
 		this.writeLine()
 	}
@@ -208,7 +227,7 @@ class MarkdownDocument {
 
 			if (target.length > 0) {
 				if (!target.startsWith('http')) {
-					target = relative(join(bookDir, this.path, '..'), target)
+					target = relative(join(bookDir, 'api'), target)
 				}
 				if (references.has(ref)) refs.set(ref, { target, title })
 			}
@@ -245,7 +264,12 @@ class MarkdownDocument {
 	}
 
 	toString() {
-		return this.lines.join(`\n`)
+		let { frontMatter, lines } = this
+		if (Object.keys(frontMatter).length) {
+			let matter = `---\n${yaml.safeDump(frontMatter)}---`
+			lines = [matter, ...lines]
+		}
+		return lines.join(`\n`)
 	}
 }
 
@@ -290,10 +314,8 @@ class DocsParser {
 
 			if (child.kindString === 'Module') {
 				this.processClass(doc, child)
-				// this.processModule(child)
 			} else if (child.kindString === 'Enumeration') {
 				this.processClass(doc, child)
-				// this.processEnumeration(child)
 			} else if (child.kindString === 'Class') {
 				this.processClass(doc, child)
 			} else if (child.kindString === 'Interface') {
@@ -302,24 +324,39 @@ class DocsParser {
 				this.processFunction(doc, child)
 			} else if (child.kindString === 'Type alias') {
 				this.processAlias(doc, child)
-				// console.log(child)
 			}
 
 			this.docs.get(child.kindString).push(doc)
 			// let relativePath = filePathForNameAndType(node.kindString, name)
-			this.addReference(child.name, join(bookDir, doc.path))
+
+			this.addReference(
+				child.name,
+				`${join(bookDir, doc.path)}#${generateAnchor(child.name)}`,
+			)
 
 			if (!this.summaryParts.has(child.name))
 				this.summaryParts.set(child.name, [])
-			console.log(doc.path)
-			this.summaryParts.get(child.name).push(`[${child.name}](${doc.path})`)
+			this.summaryParts
+				.get(child.name)
+				.push(`[${child.name}](${doc.path}#${generateAnchor(child.name)})`)
 		})
 
 		this.createSummary()
 		this.writeDocsToFiles()
 	}
 
+	public applyReferencesToHandWrittenDocs() {
+		let files = glob.sync('docs/**/*.md')
+		files.forEach(path => {
+			let doc = MarkdownDocument.fromFile(path)
+			doc.applyReferences(this.references)
+			createFileSync(path)
+			writeFileSync(path, doc.toString())
+		})
+	}
+
 	public writeDocsToFiles() {
+		this.applyReferencesToHandWrittenDocs()
 		let contents: Map<string, string[]> = new Map()
 		this.docs.forEach((docs, path) => {
 			docs.forEach(doc => {
@@ -361,7 +398,7 @@ class DocsParser {
 
 		doc.writeLine('')
 
-		doc.writeHeading('API', 1)
+		doc.writeHeading('Flood Chrome API', 1)
 		this.summaryParts.forEach((methods, name) => {
 			methods.forEach(m => {
 				doc.writeBullet(m, 2)
@@ -400,20 +437,6 @@ class DocsParser {
 			.join(`, `)
 
 		name = `\`${name}(${required}${optional.length ? `[, ${optional}]` : ''})\``
-
-		// if (prefix) {
-		// 	let anchor = name
-		// 		.toLowerCase()
-		// 		.replace(/\s+/gi, '-')
-		// 		.replace(/[^a-z0-9-]/gi, '')
-
-		// 	// this.summaryParts.get(prefix).push(`[${name}](api/${prefix}.md#${anchor})`)
-		// }
-
-		if (sig.name === 'alertIsPresent') {
-			// console.log(sig)
-		}
-
 		this.writeCallSignature(doc, name, sig.comment, params, type)
 	}
 
@@ -433,7 +456,6 @@ class DocsParser {
 		doc.writeHeading(`${name}`, 4)
 
 		params.forEach(param => {
-			// this.addReference(param.type, lookupTarget(param.type))
 			if (param.name && param.type)
 				doc.writeParameterLine(
 					param.name,
@@ -472,7 +494,10 @@ class DocsParser {
 		node.signatures.forEach(sig => {
 			this.addReference(
 				sig.name,
-				join(bookDir, filePathForNameAndType('Function', node.name)),
+				`${join(
+					bookDir,
+					filePathForNameAndType('Function', node.name),
+				)}#${generateAnchor(sig.name)}`,
 			)
 			this.processCallSignature(doc, sig, null)
 		})
@@ -523,20 +548,19 @@ class DocsParser {
 			// members.forEach(node => this.processMember(name, node, doc))
 		}
 
-		doc.writeLine()
-		doc.writeComment(node.comment)
-
 		// console.log(children.filter(node => !['Method', 'Property'].includes(node.kindString)))
 	}
 
 	private processMethod(parent, node, doc) {
 		node.signatures.forEach(sig => {
 			this.processCallSignature(doc, sig, parent)
-			if (doc.filePath)
+			if (doc.filePath) {
+				let name = `${camelcase(parent)}.${sig.name}`
 				this.addReference(
-					`${camelcase(parent)}.${sig.name}`,
-					join(bookDir, doc.filePath),
+					name,
+					`${join(bookDir, doc.filePath)}#${generateAnchor(name)}`,
 				)
+			}
 		})
 	}
 
