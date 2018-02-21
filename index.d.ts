@@ -104,8 +104,8 @@ export interface TestSettings {
 	 * Possible values:
 	 * - `"page"`: (Default) Record the document loading response time. This is usually what you consider response time on paged web apps.
 	 * - `"documentReady"`: Record page load time as the time when document ready event fires. Only useful on paged applications.
-	 * - `"networkMean"`: Takes the mean response time of all network requests which occur during a step. This is useful for Single Page Application which don't actually trigger a navigation.
-	 * - `"interaction"`: Records the wall clock time of a step. This is useful for Single Page Application which don't actually trigger a navigation.
+	 * - `"network"`: Takes the mean response time of all network requests which occur during a step. This is useful for Single Page Application which don't actually trigger a navigation.
+	 * - `"step"`: Records the wall clock time of a step. This is useful for Single Page Application which don't actually trigger a navigation.
 	 */
 	responseTimeMeasurement?: ResponseTiming
 
@@ -118,7 +118,7 @@ export interface TestSettings {
 /**
  * Specifies an option for how to record response time.
  */
-type ResponseTiming = 'page' | 'documentReady' | 'network' | 'step'
+type ResponseTiming = 'page' | 'network' | 'step'
 
 /**
  * Specifies a `console` method
