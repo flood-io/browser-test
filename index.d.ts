@@ -108,9 +108,22 @@ export interface TestSettings {
 	 * - `"interaction"`: Records the wall clock time of a step. This is useful for Single Page Application which don't actually trigger a navigation.
 	 */
 	responseTimeMeasurement?: ResponseTiming
+
+	/**
+	 * Filters the console output from the target site to log output. Useful for very noisy tests. This won't affect console output from within your script.
+	 */
+	consoleFilter: ConsoleMethod[]
 }
 
+/**
+ * Specifies an option for how to record response time.
+ */
 type ResponseTiming = 'page' | 'documentReady' | 'networkMean' | 'interaction'
+
+/**
+ * Specifies a `console` method
+ */
+type ConsoleMethod = 'log' | 'info' | 'debug' | 'warn' | 'error'
 
 /**
  * Specifies the available options which can be supplied to a step to override global settings.
