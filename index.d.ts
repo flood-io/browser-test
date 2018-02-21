@@ -97,7 +97,20 @@ export interface TestSettings {
 	 * Take a DOM snapshot of the page when a command fails, to aid in debugging.
 	 */
 	DOMSnapshotOnFailure?: boolean
+
+	/**
+	 * Configures how we record response time for each step.
+	 *
+	 * Possible values:
+	 * - `"page"`: (Default) Record the document loading response time. This is usually what you consider response time on paged web apps.
+	 * - `"documentReady"`: Record page load time as the time when document ready event fires. Only useful on paged applications.
+	 * - `"networkMean"`: Takes the mean response time of all network requests which occur during a step. This is useful for Single Page Application which don't actually trigger a navigation.
+	 * - `"interaction"`: Records the wall clock time of a step. This is useful for Single Page Application which don't actually trigger a navigation.
+	 */
+	responseTimeMeasurement?: ResponseTiming
 }
+
+type ResponseTiming = 'page' | 'documentReady' | 'networkMean' | 'interaction'
 
 /**
  * Specifies the available options which can be supplied to a step to override global settings.
@@ -161,7 +174,11 @@ export declare function setup(settings: TestSettings): void
  * @param {(driver: Driver) => Promise<void>} fn Actual implementation of step
  */
 export declare function step(name: string, fn: StepFunction): void
-export declare function step(name: string, options: StepOptions, fn: StepFunction): void
+export declare function step(
+	name: string,
+	options: StepOptions,
+	fn: StepFunction,
+): void
 
 /**
  * The standard interface for defining the callback for a <[step]>.
@@ -258,12 +275,18 @@ export declare class Browser {
 	 * Sends a double-click event to the element located by the supplied Locator or `selector`. If the element is
 	 * currently outside the viewport it will first scroll to that element.
 	 */
-	public doubleClick(locatable: Locatable, options?: ClickOptions): Promise<void>
+	public doubleClick(
+		locatable: Locatable,
+		options?: ClickOptions,
+	): Promise<void>
 
 	/**
 	 * Selects an option within a `<select>` tag using the value of the `<option>` element.
 	 */
-	public selectByValue(locatable: Locatable, ...values: string[]): Promise<string[]>
+	public selectByValue(
+		locatable: Locatable,
+		...values: string[]
+	): Promise<string[]>
 
 	/**
 	 * Selects an option within a `<select>` tag by its index in the list.
@@ -291,7 +314,11 @@ export declare class Browser {
 	 * ```
 	 *
 	 */
-	public type(locatable: Locatable, text: string, options?: { delay: number }): Promise<void>
+	public type(
+		locatable: Locatable,
+		text: string,
+		options?: { delay: number },
+	): Promise<void>
 
 	/**
 	 * Removes focus from the specified DOM element.
