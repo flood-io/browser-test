@@ -1,5 +1,9 @@
 # `@flood/chrome` Changelog
 
+## 0.2.4 (21/02/2018):
+
+* Removes `documentReady` option
+
 ## 0.2.3 (21/02/2018):
 
 * Makes `consoleFilter` optional
