@@ -1,5 +1,9 @@
 # `@flood/chrome` Changelog
 
+## 0.2.3 (21/02/2018):
+
+* Makes `consoleFilter` optional
+
 ## 0.2.2 (21/02/2018):
 
 * Adds `consoleFilter` setting

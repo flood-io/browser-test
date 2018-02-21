@@ -112,13 +112,13 @@ export interface TestSettings {
 	/**
 	 * Filters the console output from the target site to log output. Useful for very noisy tests. This won't affect console output from within your script.
 	 */
-	consoleFilter: ConsoleMethod[]
+	consoleFilter?: ConsoleMethod[]
 }
 
 /**
  * Specifies an option for how to record response time.
  */
-type ResponseTiming = 'page' | 'documentReady' | 'networkMean' | 'interaction'
+type ResponseTiming = 'page' | 'documentReady' | 'network' | 'step'
 
 /**
  * Specifies a `console` method
