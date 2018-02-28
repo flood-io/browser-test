@@ -1,5 +1,10 @@
 # `@flood/chrome` Changelog
 
+## 0.2.5 (27/02/2018):
+
+* Adds `responseTimeMeasurement` option, now defaulting to `step`
+* Adds `consoleFilter` option, which filters the browser console
+
 ## 0.2.4 (21/02/2018):
 
 * Removes `documentReady` option
