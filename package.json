@@ -1,6 +1,6 @@
 {
 	"name": "@flood/chrome",
-	"version": "0.2.5",
+	"version": "0.2.6",
 	"private": false,
 	"description": "Flood Chrome provides an API for scripting Browser Level Load Tests",
 	"types": "./index.d.ts",
