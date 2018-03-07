@@ -172,6 +172,27 @@ export interface StepOptions {
 }
 
 /**
+ * A subset of process.env available to this test.
+ */
+export interface ENV {
+	/**
+	 * A zero based index of the browser instance running this script
+	 */
+	BROWSER_ID: number
+
+	/**
+	 * The region identifier for this Grid
+	 */
+	FLOOD_GRID_REGION: string
+	FLOOD_GRID_SQEUENCE_ID: number
+	FLOOD_GRID_INDEX: number
+	FLOOD_GRID_NODE_SEQUENCE_ID: number
+	FLOOD_NODE_INDEX: number
+	FLOOD_SEQUENCE_ID: number
+	FLOOD_PROJECT_ID: number
+}
+
+/**
  * Declares the settings for the test, overriding settings exported at the top of the test.
  *
  * _This is a secondary syntax to `export const settings = {}` which functions exactly the same way.
