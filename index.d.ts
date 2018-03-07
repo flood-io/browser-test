@@ -113,6 +113,11 @@ export interface TestSettings {
 	 * Filters the console output from the target site to log output. Useful for very noisy tests. This won't affect console output from within your script.
 	 */
 	consoleFilter?: ConsoleMethod[]
+
+	/**
+	 * Whether to ignore HTTPS errors during navigation. Defaults to `false`
+	 */
+	ignoreHTTPSErrors?: boolean
 }
 
 /**
