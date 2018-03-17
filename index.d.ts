@@ -678,12 +678,11 @@ declare class Until {
 	 *
 	 * The target frame may be specified as:
 	 * - numeric index into window.frames for the currently selected frame.
-	 * - ElementHandle, which must references a FRAME or IFRAME element on the current page.
 	 * - locator which may be used to first locate a FRAME or IFRAME on the current page before attempting to switch to it.
 	 *
 	 * Upon successful resolution of this condition, the driver will be left focused on the new frame.
 	 */
-	static ableToSwitchToFrame(): Condition
+	static ableToSwitchToFrame(frame: string | number): Condition
 
 	/**
 	 * Creates a condition that waits for an alert to be opened. Upon success, the returned promise will be fulfilled with the handle for the opened alert
