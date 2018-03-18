@@ -61,6 +61,7 @@
 		"arrowParens": "avoid"
 	},
 	"release": {
-		"branch": "master"
+		"branch": "master",
+		"publish": ["@semantic-release/npm"]
 	}
 }
