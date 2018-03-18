@@ -1,7 +1,7 @@
 env | grep BUILDKITE > .env
 env | grep CI >> .env
-# env | grep GH_TOKEN >> .env
-# env | grep NPM_TOKEN >> .env
+env | grep GITHUB_TOKEN >> .env
+env | grep NPM_TOKEN >> .env
 
 echo NODE_ENV=test >> .env
 REVISION=${BUILDKITE_COMMIT:0:8}
