@@ -28,6 +28,7 @@
 	"main": "index.js",
 	"devDependencies": {
 		"commonmark": "^0.28.1",
+		"conventional-changelog-ember": "^0.3.6",
 		"front-matter": "^2.3.0",
 		"gitbook-cli": "^2.3.2",
 		"glob": "^7.1.2",
