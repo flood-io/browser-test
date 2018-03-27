@@ -220,7 +220,7 @@ export interface TestDataRow {
  *
  * @param filePath a path relative to root which contains the test data
  */
-export declare function loadTestData(filePath: string): TestDataRow[]
+export declare function loadTestData(filePath: string): Promise<TestDataRow[]>
 
 /**
  * Declares each step in your test. This must go within your main test expression.
