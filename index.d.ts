@@ -149,6 +149,8 @@ type ResponseTiming =
  */
 type ConsoleMethod = 'log' | 'info' | 'debug' | 'warn' | 'error'
 
+type EvaluateFn = string | ((...args: any[]) => any)
+
 /**
  * Specifies the available options which can be supplied to a step to override global settings.
  *
@@ -321,6 +323,8 @@ export declare class Browser {
 	 * or a <[Condition]>, for more flexible conditions.
 	 */
 	public wait(timeoutOrCondition: Condition | number): Promise<boolean>
+
+	public evaluate(fn: EvaluateFn, ...args: any[]): Promise<any>
 
 	/**
 	 * Sends a click event to the element located at `selector`. If the element is
