@@ -171,19 +171,6 @@ export interface StepOptions {
 	waitTimeout?: number
 }
 
-export type FloodEnvKey =
-	/**
-	 * A zero based index of the browser instance running this script
-	 */
-	| 'BROWSER_ID'
-	| 'FLOOD_GRID_REGION'
-	| 'FLOOD_GRID_SQEUENCE_ID'
-	| 'FLOOD_GRID_INDEX'
-	| 'FLOOD_GRID_NODE_SEQUENCE_ID'
-	| 'FLOOD_NODE_INDEX'
-	| 'FLOOD_SEQUENCE_ID'
-	| 'FLOOD_PROJECT_ID'
-
 export interface FloodProcessEnv {
 	BROWSER_ID: number
 	FLOOD_GRID_REGION: string
@@ -217,6 +204,21 @@ export const ENV: FloodProcessEnv
  * @param {TestSettings} settings
  */
 export declare function setup(settings: TestSettings): void
+
+export interface TestDataRow {
+	[key: string]: string | number | boolean | null | undefined
+}
+
+/**
+ * Loads test data from the test directory to use in your test.
+ *
+ * Supported formats:
+ * - **CSV**: When loading CSV, you'll receive an array of objects for each row keyed by header
+ * - **JSON**: When loading JSON, the root object should be an array of objects
+ *
+ * @param filePath a path relative to root which contains the test data
+ */
+export declare function loadTestData(filePath: string): TestDataRow[]
 
 /**
  * Declares each step in your test. This must go within your main test expression.
