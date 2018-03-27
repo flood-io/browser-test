@@ -171,18 +171,21 @@ export interface StepOptions {
 	waitTimeout?: number
 }
 
-/**
- * A subset of process.env available to this test.
- */
-export interface ENV {
+export type FloodEnvKey =
 	/**
 	 * A zero based index of the browser instance running this script
 	 */
-	BROWSER_ID: number
+	| 'BROWSER_ID'
+	| 'FLOOD_GRID_REGION'
+	| 'FLOOD_GRID_SQEUENCE_ID'
+	| 'FLOOD_GRID_INDEX'
+	| 'FLOOD_GRID_NODE_SEQUENCE_ID'
+	| 'FLOOD_NODE_INDEX'
+	| 'FLOOD_SEQUENCE_ID'
+	| 'FLOOD_PROJECT_ID'
 
-	/**
-	 * The region identifier for this Grid
-	 */
+export interface FloodProcessEnv {
+	BROWSER_ID: number
 	FLOOD_GRID_REGION: string
 	FLOOD_GRID_SQEUENCE_ID: number
 	FLOOD_GRID_INDEX: number
@@ -191,6 +194,11 @@ export interface ENV {
 	FLOOD_SEQUENCE_ID: number
 	FLOOD_PROJECT_ID: number
 }
+
+/**
+ * A subset of process.env available to this test.
+ */
+export const ENV: FloodProcessEnv
 
 /**
  * Declares the settings for the test, overriding settings exported at the top of the test.
