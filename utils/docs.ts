@@ -48,7 +48,12 @@ function filePathForNameAndType(kind: string, name: string): string {
 		Function: name => join('api', `Functions.md`),
 		'Type alias': name => join('api', `Interfaces.md`),
 		Enumeration: name => join('api', `Interfaces.md`),
+		Variable: name => join('api', `Interfaces.md`),
 		Index: name => name,
+	}
+
+	if (!paths[kind]) {
+		throw new Error(`Unknown language construct: ${kind}`)
 	}
 
 	let relativePath = paths[kind](name)
@@ -433,7 +438,11 @@ class DocsParser {
 
 		let params = []
 		parameters.forEach(p => {
-			let { name, type, flags: { isOptional = false } } = p
+			let {
+				name,
+				type,
+				flags: { isOptional = false },
+			} = p
 			let desc = commentFromNode(p)
 			params.push({ name, desc, type, isOptional })
 		})
