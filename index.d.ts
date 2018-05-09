@@ -270,6 +270,13 @@ export type StepFunction = (browser: Driver) => Promise<void>
  */
 export declare class Browser {
 	/**
+	 * Sets the HTTP Authentication details to use if the page is presented with an authentication prompt.
+	 *
+	 * Call without any args to disable authentication.
+	 */
+	public authenticate(username?: string, password?: string): Promise<void>
+
+	/**
 	 * Clear browser cookies.
 	 */
 	public clearBrowserCookies(): Promise<any>
