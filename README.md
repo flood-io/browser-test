@@ -6,7 +6,7 @@ Flood Chrome works by spinning up hundreds or even thousands of instances of Goo
 
 > This project is currently in beta and APIs are subject to change.
 
-![Flood Chrome Example code](./code-snippet.png)
+![Flood Chrome Example code](./docs/code-snippet.png)
 
 # Quickstart
 
