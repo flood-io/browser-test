@@ -2,12 +2,14 @@
 	"name": "@flood/chrome",
 	"version": "0.3.1",
 	"private": false,
-	"description": "Flood Chrome provides an API for scripting Browser Level Load Tests",
+	"description":
+		"Flood Chrome provides an API for scripting Browser Level Load Tests",
 	"types": "./index.d.ts",
 	"scripts": {
 		"release": "npm-release",
 		"doc": "yarn typedoc && ts-node ./utils/docs.ts",
-		"docs": "node --trace-warnings $(npm bin)/nodemon --ext ts --exec ts-node -- ./utils/docs.ts",
+		"docs":
+			"node --trace-warnings $(npm bin)/nodemon --ext ts --exec ts-node -- ./utils/docs.ts",
 		"typedoc": "typedoc --json docs.json --includeDeclarations  ./index.d.ts"
 	},
 	"repository": {
@@ -35,7 +37,7 @@
 		"mkdirp": "^0.5.1",
 		"nodemon": "^1.14.12",
 		"npm-release": "^1.0.0",
-		"semantic-release": "^15.1.2",
+		"semantic-release": "^15.5.0",
 		"ts-node": "^4.1.0",
 		"typedoc": "^0.10.0"
 	},
@@ -60,8 +62,29 @@
 	},
 	"release": {
 		"branch": "master",
-		"publish": [
-			"@semantic-release/npm"
-		]
+		"publish": ["@semantic-release/npm"],
+		"analyzeCommits": {
+			"preset": "angular",
+			"releaseRules": [
+				{
+					"type": "docs",
+					"scope": "README",
+					"release": "patch"
+				},
+				{
+					"type": "refactor",
+					"release": "patch"
+				},
+				{
+					"type": "style",
+					"release": "patch"
+				},
+				{
+					"type": "refactor",
+					"scope": "inded.d.ts",
+					"release": "minor"
+				}
+			]
+		}
 	}
 }
