@@ -182,6 +182,11 @@ export interface FloodProcessEnv {
 	FLOOD_NODE_INDEX: number
 	FLOOD_SEQUENCE_ID: number
 	FLOOD_PROJECT_ID: number
+
+	/**
+	 * Globally unique sequence number for this browser instance.
+	 */
+	SEQUENCE: number
 }
 
 /**
@@ -206,21 +211,9 @@ export const ENV: FloodProcessEnv
  * @param {TestSettings} settings
  */
 export declare function setup(settings: TestSettings): void
-
 export interface TestDataRow {
-	[key: string]: string | number | boolean | null | undefined
+	[key: string]: string | number | boolean | null
 }
-
-/**
- * Loads test data from the test directory to use in your test.
- *
- * Supported formats:
- * - **CSV**: When loading CSV, you'll receive an array of objects for each row keyed by header
- * - **JSON**: When loading JSON, the root object should be an array of objects
- *
- * @param filePath a path relative to root which contains the test data
- */
-export declare function loadTestData(filePath: string): Promise<TestDataRow[]>
 
 /**
  * Declares each step in your test. This must go within your main test expression.
@@ -243,17 +236,119 @@ export declare function loadTestData(filePath: string): Promise<TestDataRow[]>
  * @param {string} name Step Name
  * @param {(driver: Driver) => Promise<void>} fn Actual implementation of step
  */
-export declare function step(name: string, fn: StepFunction): void
+export declare function step(name: string, fn: StepFunction<any>): void
 export declare function step(
 	name: string,
 	options: StepOptions,
-	fn: StepFunction,
+	fn: StepFunction<any>,
 ): void
 
 /**
  * The standard interface for defining the callback for a <[step]>.
  */
-export type StepFunction = (browser: Driver) => Promise<void>
+export type StepFunction<T> = (
+	this: null,
+	browser: Driver,
+	data?: T,
+) => Promise<void>
+
+/**
+ * Use this to load test data which will be iterated over with each iteration of your test.
+ *
+ * @export
+ * @class TestData
+ * @template T
+ */
+export declare class TestData<T> {
+	/**
+	 * Loads a standard Javascript array of data objects
+	 */
+	public static fromData<TRow>(lines: TRow[]): TestData<TRow>
+
+	/**
+	 * Loads test data from a CSV file, returning a `TestData` instance.
+	 */
+	public static fromCSV<T>(
+		// filename to load, based on what you upload to Flood. All test files are in the current path.
+		filename: string,
+		// Specify a different separator
+		seperator?: string,
+	): TestData<T>
+
+	/**
+	 * Loads data from a JSON ffile
+	 */
+	public static fromJSON<TRow>(filename: string): TestData<TRow>
+
+	/**
+	 * Instructs the data feeder to repeat the data set when it reaches the end.
+	 * @param circular optional, pass `false` to disable
+	 */
+	public circular(circular?: boolean): this
+
+	/**
+	 * Shuffles the data set using the Fisher-Yates method. Use this to randomise the order of your data. This will always be applied after filtering.
+	 * @param shuffle optional, pass `false` to disable
+	 */
+	public shuffle(shuffle?: boolean): this
+
+	/**
+	 * Adds a filter to apply against each line in the data set.
+	 *
+	 * Filters can be chained, and will be run in order only if the previous ffilter passed.
+	 *
+	 * Example:
+	 * 	```
+	 * 		type Row = { browser: string, email: string }
+	 * 		TestData.fromCSV("users.csv").filter((line, index, browserID) => line.browser === browserID)
+	 *  ```
+	 *
+	 * @param func filter function to compare each line
+	 */
+	public filter(func: FeedFilterFunction<T>): this
+}
+
+/**
+ * FeedFilterFunction behaves exactly like the standard Javascript `Array.prototype.filter`, except that is supplies a 3rd argument which is set to the browser index on this grid.
+ */
+export type FeedFilterFunction<T> = (
+	line: T,
+	index: number,
+	instanceID: string,
+) => boolean
+
+
+export type StepDefinition<T> = (
+	name: string,
+	fn: StepFunction<T>,
+) => PromiseLike<any>
+
+/**
+ * Defines a test suite of steps to run.
+ *
+ * **Example:**
+ * ```
+ *   export default suite(step => {
+ *     step("Step 1", async browser => {
+ *       await browser.visit('...')
+ *     })
+ *   })
+ * ```
+ *
+ * @param testDefinition
+ */
+declare const suite: Flood.ISuiteDefinition
+
+export namespace Flood {
+	interface ISuiteDefinition {
+		(callback: (this: null, step: StepDefinition<null>) => void)
+		withData<T>(
+			data: TestData<T>,
+			callback: (this: null, step: StepDefinition<T>) => void,
+		)
+	}
+}
+
 
 /**
  * Browser (also called Driver) is the main entry point in each <[step]>, it's your direct connection to the browser running the test.
@@ -488,7 +583,7 @@ declare class ElementHandle {
 	/**
 	 * Sends a series of key modifiers to the element.
 	 */
-	public sendKeys(...keys: string[]): Promise<void>
+	public sendKeys(...keys: (string | Key)[]): Promise<void>
 
 	/**
 	 * Sends a series of key presses to the element to simulate a user typing on the keyboard. Use this to fill in input fields.
@@ -672,12 +767,20 @@ declare class By {
 	static partialVisibleText(text: string): Locator
 
 	/**
+	 * Locates elements whose `name` attribute has the given value.
+	 *
+	 * @param {string} value The name attribute to search for.
+	 * @return {!By} The new locator.
+	 */
+	static nameAttr(value: string): Locator
+
+	/**
 	 * Finds an element containing a specified attribute value
 	 * @param tagName TagName to scope selection to
-	 * @param attrName The attribute to search for
-	 * @param attrValue Optional attribute value to compare
+	 * @param attributeName The attribute to search for
+	 * @param value Optional attribute value to compare
 	 */
-	static attr(tagName: string, attrName: string, attrValue?: string): Locator
+	static attr(tagName: string, attributeName: string, value?: string): Locator
 
 	/**
 	 * Locates an element using an XPath expression
@@ -839,70 +942,71 @@ export type Locatable = Locator | string
  * @export
  * @enum {number}
  */
+
 export enum Key {
-	NULL,
-	CANCEL, // ^break
-	HELP,
-	BACK_SPACE,
-	TAB,
-	CLEAR,
-	RETURN,
-	ENTER,
-	SHIFT,
-	CONTROL,
-	ALT,
-	PAUSE,
-	ESCAPE,
-	SPACE,
-	PAGE_UP,
-	PAGE_DOWN,
-	END,
-	HOME,
-	ARROW_LEFT,
-	LEFT,
-	ARROW_UP,
-	UP,
-	ARROW_RIGHT,
-	RIGHT,
-	ARROW_DOWN,
-	DOWN,
-	INSERT,
-	DELETE,
-	SEMICOLON,
-	EQUALS,
+	NULL = '\uE000',
+	CANCEL = '\uE001', // ^break
+	HELP = '\uE002',
+	BACK_SPACE = '\uE003',
+	TAB = '\uE004',
+	CLEAR = '\uE005',
+	RETURN = '\uE006',
+	ENTER = '\uE007',
+	SHIFT = '\uE008',
+	CONTROL = '\uE009',
+	ALT = '\uE00A',
+	PAUSE = '\uE00B',
+	ESCAPE = '\uE00C',
+	SPACE = '\uE00D',
+	PAGE_UP = '\uE00E',
+	PAGE_DOWN = '\uE00F',
+	END = '\uE010',
+	HOME = '\uE011',
+	ARROW_LEFT = '\uE012',
+	LEFT = '\uE012',
+	ARROW_UP = '\uE013',
+	UP = '\uE013',
+	ARROW_RIGHT = '\uE014',
+	RIGHT = '\uE014',
+	ARROW_DOWN = '\uE015',
+	DOWN = '\uE015',
+	INSERT = '\uE016',
+	DELETE = '\uE017',
+	SEMICOLON = '\uE018',
+	EQUALS = '\uE019',
 
-	NUMPAD0,
-	NUMPAD1,
-	NUMPAD2,
-	NUMPAD3,
-	NUMPAD4,
-	NUMPAD5,
-	NUMPAD6,
-	NUMPAD7,
-	NUMPAD8,
-	NUMPAD9,
-	MULTIPLY,
-	ADD,
-	SEPARATOR,
-	SUBTRACT,
-	DECIMAL,
-	DIVIDE,
+	NUMPAD0 = '\uE01A', // number pad keys
+	NUMPAD1 = '\uE01B',
+	NUMPAD2 = '\uE01C',
+	NUMPAD3 = '\uE01D',
+	NUMPAD4 = '\uE01E',
+	NUMPAD5 = '\uE01F',
+	NUMPAD6 = '\uE020',
+	NUMPAD7 = '\uE021',
+	NUMPAD8 = '\uE022',
+	NUMPAD9 = '\uE023',
+	MULTIPLY = '\uE024',
+	ADD = '\uE025',
+	SEPARATOR = '\uE026',
+	SUBTRACT = '\uE027',
+	DECIMAL = '\uE028',
+	DIVIDE = '\uE029',
 
-	F1,
-	F2,
-	F3,
-	F4,
-	F5,
-	F6,
-	F7,
-	F8,
-	F9,
-	F10,
-	F11,
-	F12,
+	F1 = '\uE031', // function keys
+	F2 = '\uE032',
+	F3 = '\uE033',
+	F4 = '\uE034',
+	F5 = '\uE035',
+	F6 = '\uE036',
+	F7 = '\uE037',
+	F8 = '\uE038',
+	F9 = '\uE039',
+	F10 = '\uE03A',
+	F11 = '\uE03B',
+	F12 = '\uE03C',
 
-	COMMAND,
-	META,
+	COMMAND = '\uE03D', // Apple command key
+	META = '\uE03D', // alias for Windows key
 }
 
 /**
