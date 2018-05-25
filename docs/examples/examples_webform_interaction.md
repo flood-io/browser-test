@@ -39,5 +39,3 @@ Dropdown listbox values can simply be chosen by using the selectByValue function
 ```typescript
         await browser.selectByValue(By.id('challenger_age'), '28')
 ``` 
-
-

@@ -29,5 +29,3 @@ You are also able to validate a resulting page using partial strings - as follow
 		await browser.wait(Until.elementIsVisible(pageTextVerify))
 ```
 
-
-
