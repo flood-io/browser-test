@@ -1,6 +1,6 @@
 # `@flood/chrome`
 
-Flood Chrome brings the familiar power of traditional browser scripting tools with the proven performance of Flood to create an easy to use and maintainable performance testing tool.
+Flood Chrome brings the familiar power of traditional browser scripting tools together with the proven performance of Flood to create an easy-to-use and maintainable performance testing tool.
 
 Flood Chrome works by spinning up hundreds or even thousands of instances of Google Chrome, and running scripts you define here to drive a load test. We can this Browser Level Load Testing.
 
@@ -57,7 +57,7 @@ yarn install
 
 #### 3. Write and validate your script
 
-Edit `test.ts` in your editor of choice. To learn more about the scripting capabilities we've put together a detailed tutorial on [testing the "Flood Merchandice Store"](examples/scenario_1_wordpress.md).
+Edit `test.ts` in your editor of choice. To learn more about the scripting capabilities we've put together a detailed tutorial on [testing the "Flood Merchandise Store"](examples/scenario_1_wordpress.md).
 
 As you're writing your script, you can validate it by running it on the Flood validation service:
 
@@ -97,5 +97,4 @@ If you encounter any issues with the `@flood/chrome` project or Flood Chrome pro
 
 If you're encountering issues with Flood itself, please contact Flood Support from within the Flood Dashboard.
 
-
-[Flood]: Flood.md#flood
+[flood]: Flood.md#flood
