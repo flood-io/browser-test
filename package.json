@@ -37,7 +37,7 @@
 		"mkdirp": "^0.5.1",
 		"nodemon": "^1.14.12",
 		"npm-release": "^1.0.0",
-		"semantic-release": "^15.5.0",
+		"semantic-release": "^17.2.3",
 		"ts-node": "^4.1.0",
 		"typedoc": "^0.10.0"
 	},
